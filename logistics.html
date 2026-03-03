@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JET Republic — Логистика</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;color:#1a1a1a;min-height:100vh}
+        .top-bar{display:flex;align-items:center;padding:16px 20px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
+        .top-bar .back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;margin-right:12px;text-decoration:none}
+        .top-bar .back-btn svg{width:20px;height:20px}
+        .top-bar .title{font-size:17px;font-weight:700;color:#1a5c3a}
+        .container{max-width:700px;margin:0 auto;padding:20px 16px 80px}
+        .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+        .filters select,.filters input{padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:#fff;outline:none}
+        .filters select:focus,.filters input:focus{border-color:#1a5c3a}
+        .filters button{padding:10px 16px;background:#1a5c3a;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+
+        .order-card{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-left:4px solid #ddd}
+        .order-card.status-new{border-left-color:#2196f3}
+        .order-card.status-processing{border-left-color:#ff9800}
+        .order-card.status-shipped{border-left-color:#4caf50}
+        .order-card.status-delivered{border-left-color:#1a5c3a}
+        .order-card.status-cancelled{border-left-color:#dc3545}
+        .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .order-id{font-size:12px;color:#999;font-weight:600}
+        .order-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+        .s-new{background:#e3f2fd;color:#1976d2}
+        .s-processing{background:#fff3e0;color:#f57c00}
+        .s-shipped{background:#e8f5e9;color:#388e3c}
+        .s-delivered{background:#c8e6c9;color:#2e7d32}
+        .s-cancelled{background:#ffebee;color:#c62828}
+        .order-client{font-size:15px;font-weight:600;margin-bottom:2px}
+        .order-phone{font-size:13px;color:#666;margin-bottom:4px}
+        .order-detail{font-size:12px;color:#888;margin-bottom:2px}
+        .order-detail span{color:#333;font-weight:500}
+        .order-addr{font-size:12px;color:#1a5c3a;font-weight:500;margin-bottom:8px}
+        .edit-logistics-btn{padding:8px 16px;background:#f0f0f0;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#333;margin-top:10px;transition:background .2s}
+        .edit-logistics-btn:hover{background:#e0e0e0}
+
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+        .modal-overlay.active{display:flex}
+        .modal-sheet{background:#fff;width:100%;max-width:600px;border-radius:20px 20px 0 0;padding:28px 20px 40px;max-height:85vh;overflow-y:auto}
+        .modal-sheet h3{font-size:17px;font-weight:700;margin-bottom:20px;text-align:center}
+        .modal-sheet .field{margin-bottom:14px}
+        .modal-sheet label{display:block;font-size:12px;font-weight:600;color:#666;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+        .modal-sheet select,.modal-sheet input{width:100%;padding:14px 16px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;outline:none}
+        .modal-sheet select:focus,.modal-sheet input:focus{border-color:#1a5c3a}
+        .extra-field{display:none}
+        .extra-field.visible{display:block}
+        .modal-actions{display:flex;gap:10px;margin-top:20px}
+        .modal-actions button{flex:1;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer}
+        .btn-cancel{background:#f0f0f0;color:#333}
+        .btn-save{background:#1a5c3a;color:#fff}
+
+        .empty-state{text-align:center;padding:60px;color:#ccc;font-size:14px}
+
+        @media(min-width:600px){
+            .modal-overlay{align-items:center}
+            .modal-sheet{border-radius:20px;max-height:80vh}
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+        <div class="title">Логистика</div>
+    </div>
+
+    <div class="container">
+        <div class="filters">
+            <select id="filterStatus">
+                <option value="">Барлық статустар</option>
+                <option value="new">Жаңа</option>
+                <option value="processing">Өңделуде</option>
+                <option value="shipped">Жіберілді</option>
+                <option value="delivered">Жеткізілді</option>
+            </select>
+            <select id="filterDeliveryType"><option value="">Жеткізу түрі</option></select>
+            <input type="date" id="filterDateFrom">
+            <input type="date" id="filterDateTo">
+            <button onclick="loadOrders()">Фильтрлеу</button>
+        </div>
+        <div id="ordersList"><div class="empty-state">Жүктелуде...</div></div>
+    </div>
+
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-sheet">
+            <h3>Жеткізу ақпаратын өзгерту</h3>
+            <input type="hidden" id="editId">
+            <div class="field">
+                <label>Статус</label>
+                <select id="editStatus">
+                    <option value="new">Жаңа</option>
+                    <option value="processing">Өңделуде</option>
+                    <option value="shipped">Жіберілді</option>
+                    <option value="delivered">Жеткізілді</option>
+                    <option value="cancelled">Бас тартылды</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Жеткізу түрі</label>
+                <select id="editDeliveryType" onchange="updateExtraField()"></select>
+            </div>
+            <div class="field extra-field" id="extraFieldGroup">
+                <label id="extraFieldLabel">Қосымша ақпарат</label>
+                <input type="text" id="editExtraValue">
+            </div>
+            <div class="field">
+                <label>Жіберілген күні</label>
+                <input type="date" id="editShippedDate">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Бас тарту</button>
+                <button class="btn-save" onclick="saveLogistics()">Сақтау</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL='https://jnuokhhqojlurvadcduv.supabase.co';
+        const SUPABASE_KEY='sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk';
+        const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+        let deliveryTypes=[];
+
+        async function loadDeliveryTypes(){
+            const {data}=await sb.from('eseke-delivery-types').select('*').eq('active',true);
+            deliveryTypes=data||[];
+            const f=document.getElementById('filterDeliveryType');
+            const e=document.getElementById('editDeliveryType');
+            e.innerHTML='<option value="">— таңдаңыз —</option>';
+            deliveryTypes.forEach(dt=>{
+                f.innerHTML+=`<option value="${dt.id}">${dt.name}</option>`;
+                e.innerHTML+=`<option value="${dt.id}" data-extra="${dt.extra_field_name||''}">${dt.name}</option>`;
+            });
+        }
+
+        function updateExtraField(){
+            const sel=document.getElementById('editDeliveryType');
+            const opt=sel.options[sel.selectedIndex];
+            const extra=opt?.dataset?.extra;
+            const g=document.getElementById('extraFieldGroup');
+            const l=document.getElementById('extraFieldLabel');
+            if(extra){
+                g.classList.add('visible');
+                l.textContent=extra;
+                document.getElementById('editExtraValue').placeholder=extra+' енгізіңіз';
+            }else{
+                g.classList.remove('visible');
+            }
+        }
+
+        async function loadOrders(){
+            const status=document.getElementById('filterStatus').value;
+            const dtype=document.getElementById('filterDeliveryType').value;
+            const from=document.getElementById('filterDateFrom').value;
+            const to=document.getElementById('filterDateTo').value;
+
+            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-delivery-types(name, extra_field_name), eseke-payment-types(name)').order('created_at',{ascending:false}).limit(200);
+            if(status) q=q.eq('status',status);
+            if(dtype) q=q.eq('delivery_type_id',parseInt(dtype));
+            if(from) q=q.gte('created_at',from+'T00:00:00');
+            if(to) q=q.lte('created_at',to+'T23:59:59');
+
+            const {data:orders}=await q;
+            const list=document.getElementById('ordersList');
+            if(!orders||orders.length===0){
+                list.innerHTML='<div class="empty-state">Тапсырыстар табылмады</div>';
+                return;
+            }
+            const sText={new:'Жаңа',processing:'Өңделуде',shipped:'Жіберілді',delivered:'Жеткізілді',cancelled:'Бас тартылды'};
+            const sCls={new:'s-new',processing:'s-processing',shipped:'s-shipped',delivered:'s-delivered',cancelled:'s-cancelled'};
+
+            list.innerHTML=orders.map(o=>{
+                const mName=o['eseke-managers']?.name||'-';
+                const dName=o['eseke-delivery-types']?.name||'-';
+                const extraLabel=o['eseke-delivery-types']?.extra_field_name||'';
+                return `
+                <div class="order-card status-${o.status}">
+                    <div class="order-top">
+                        <span class="order-id">#${o.id} • ${mName}</span>
+                        <span class="order-status ${sCls[o.status]}">${sText[o.status]}</span>
+                    </div>
+                    <div class="order-client">${o.customer_name}</div>
+                    <div class="order-phone">${o.customer_phone||''}</div>
+                    ${o.customer_address?`<div class="order-addr">${o.customer_address}</div>`:''}
+                    <div class="order-detail">Жеткізу: <span>${dName}</span></div>
+                    ${o.delivery_extra_value?`<div class="order-detail">${extraLabel}: <span>${o.delivery_extra_value}</span></div>`:''}
+                    ${o.shipped_date?`<div class="order-detail">Жіберілген: <span>${o.shipped_date}</span></div>`:''}
+                    <div class="order-detail">Бағасы: <span>${Number(o.total_price||0).toLocaleString()} ₸</span></div>
+                    <button class="edit-logistics-btn" onclick='openEditModal(${JSON.stringify({id:o.id,status:o.status,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||"",shipped_date:o.shipped_date||""})})'>Жеткізуді өзгерту</button>
+                </div>`;
+            }).join('');
+        }
+
+        function openEditModal(o){
+            document.getElementById('editId').value=o.id;
+            document.getElementById('editStatus').value=o.status;
+            document.getElementById('editDeliveryType').value=o.delivery_type_id||'';
+            document.getElementById('editExtraValue').value=o.delivery_extra_value||'';
+            document.getElementById('editShippedDate').value=o.shipped_date||'';
+            updateExtraField();
+            document.getElementById('editModal').classList.add('active');
+        }
+        function closeModal(){document.getElementById('editModal').classList.remove('active')}
+
+        async function saveLogistics(){
+            const id=parseInt(document.getElementById('editId').value);
+            const update={
+                status:document.getElementById('editStatus').value,
+                delivery_type_id:document.getElementById('editDeliveryType').value?parseInt(document.getElementById('editDeliveryType').value):null,
+                delivery_extra_value:document.getElementById('editExtraValue').value||null,
+                shipped_date:document.getElementById('editShippedDate').value||null
+            };
+            const {error}=await sb.from('eseke-orders').update(update).eq('id',id);
+            if(error){alert('Қате: '+error.message);return}
+            closeModal();
+            loadOrders();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+        loadDeliveryTypes();
+        loadOrders();
+    </script>
+</body>
+</html>

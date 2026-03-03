@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESKHAT Orders — Админ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;color:#1a1a1a;min-height:100vh}
+        .top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
+        .top-bar-left{display:flex;align-items:center;gap:12px}
+        .top-bar .back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;text-decoration:none}
+        .top-bar .back-btn svg{width:20px;height:20px}
+        .top-bar .title{font-size:17px;font-weight:700;color:#1a1a1a}
+        .logout-btn{padding:8px 14px;background:#f5f5f5;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#888}
+        .logout-btn:hover{background:#eee}
+
+        .nav-tabs{display:flex;background:#fff;border-bottom:1px solid #eee;overflow-x:auto;position:sticky;top:57px;z-index:99}
+        .nav-tabs button{padding:14px 18px;border:none;background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#888;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Inter',sans-serif}
+        .nav-tabs button.active{color:#1a5c3a;border-bottom-color:#1a5c3a}
+
+        .container{max-width:960px;margin:0 auto;padding:20px 16px 80px}
+        .tab-panel{display:none}
+        .tab-panel.active{display:block}
+
+        .card{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+        .card h2{font-size:15px;font-weight:700;margin-bottom:16px;color:#333;padding-bottom:10px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px}
+        .card h2 svg{width:18px;height:18px;opacity:0.5}
+
+        .field{margin-bottom:14px}
+        .field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:6px}
+        .field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;outline:none;background:#fff}
+        .field input:focus,.field select:focus{border-color:#1a5c3a}
+
+        .btn{padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+        .btn-primary{background:#1a5c3a;color:#fff}
+        .btn-primary:hover{background:#14472e}
+        .btn-danger{background:#dc3545;color:#fff}
+        .btn-danger:hover{background:#c82333}
+        .btn-outline{background:#f5f5f5;color:#333;border:1px solid #ddd}
+        .btn-outline:hover{background:#eee}
+        .btn-sm{padding:6px 12px;font-size:11px}
+
+        .inline-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+        .inline-form .field{margin-bottom:0;flex:1;min-width:140px}
+
+        .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+        .filters select,.filters input{padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:#fff;outline:none}
+
+        /* Order cards */
+        .order-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);border-left:4px solid #ddd;position:relative}
+        .order-card.status-new{border-left-color:#2196f3}
+        .order-card.status-processing{border-left-color:#ff9800}
+        .order-card.status-shipped{border-left-color:#4caf50}
+        .order-card.status-delivered{border-left-color:#1a5c3a}
+        .order-card.status-cancelled{border-left-color:#dc3545}
+        .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .order-id{font-size:11px;color:#999;font-weight:600}
+        .order-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+        .s-new{background:#e3f2fd;color:#1976d2}
+        .s-processing{background:#fff3e0;color:#f57c00}
+        .s-shipped{background:#e8f5e9;color:#388e3c}
+        .s-delivered{background:#c8e6c9;color:#2e7d32}
+        .s-cancelled{background:#ffebee;color:#c62828}
+        .order-client{font-size:14px;font-weight:600;margin-bottom:2px}
+        .order-detail{font-size:11px;color:#888;margin-bottom:2px}
+        .order-detail span{color:#333;font-weight:500}
+        .order-price{font-size:16px;font-weight:700;color:#1a5c3a;margin-top:6px}
+        .order-actions{display:flex;gap:6px;margin-top:10px}
+
+        /* Stat cards */
+        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+        .stat-card{background:#fff;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);border-top:3px solid #1a5c3a}
+        .stat-card.accent{border-top-color:#ff9800}
+        .stat-card.success{border-top-color:#4caf50}
+        .stat-card.info{border-top-color:#2196f3}
+        .stat-card h3{font-size:24px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+        .stat-card p{font-size:11px;color:#888;font-weight:500}
+
+        .chart-container{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+        .chart-container h3{font-size:13px;font-weight:600;margin-bottom:12px;color:#555}
+        .chart-container canvas{max-height:250px}
+
+        /* Table for admin */
+        .data-table{width:100%;border-collapse:collapse;font-size:13px}
+        .data-table th{text-align:left;padding:10px 12px;background:#f8f9fa;font-weight:600;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+        .data-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+        .data-table tr:last-child td{border-bottom:none}
+        .badge-active{color:#1a5c3a;font-weight:600;cursor:pointer}
+        .badge-inactive{color:#dc3545;font-weight:600;cursor:pointer}
+
+        /* Client cards */
+        .client-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
+        .client-info h4{font-size:14px;font-weight:600;margin-bottom:2px}
+        .client-info p{font-size:12px;color:#888}
+        .client-stat{text-align:right}
+        .client-stat .count{font-size:18px;font-weight:700;color:#1a5c3a}
+        .client-stat .amount{font-size:12px;color:#888}
+
+        /* Modal */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+        .modal-overlay.active{display:flex}
+        .modal-sheet{background:#fff;width:100%;max-width:700px;border-radius:20px 20px 0 0;padding:28px 20px 40px;max-height:90vh;overflow-y:auto}
+        .modal-sheet h3{font-size:17px;font-weight:700;margin-bottom:20px;text-align:center}
+        .modal-actions{display:flex;gap:10px;margin-top:20px}
+        .modal-actions button{flex:1;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+        .btn-cancel{background:#f0f0f0;color:#333}
+        .btn-save{background:#1a5c3a;color:#fff}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        @media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+
+        @media(min-width:600px){
+            .modal-overlay{align-items:center}
+            .modal-sheet{border-radius:20px}
+        }
+        @media(max-width:480px){
+            .nav-tabs button{padding:12px 14px;font-size:11px}
+            .data-table{font-size:11px}
+            .data-table th,.data-table td{padding:8px 6px}
+        }
+
+        /* Salary table */
+        .salary-table{width:100%;border-collapse:collapse;margin-top:12px}
+        .salary-table th{background:#1a5c3a;color:#fff;padding:10px 12px;font-size:11px;text-transform:uppercase;text-align:left}
+        .salary-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
+        .salary-amount{font-weight:700;color:#1a5c3a}
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <div class="title">Админ панель</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Шығу</button>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="active" onclick="showTab('orders')">Тапсырыстар</button>
+        <button onclick="showTab('stats')">Статистика</button>
+        <button onclick="showTab('clients')">Клиенттер</button>
+        <button onclick="showTab('settings')">Баптау</button>
+    </div>
+
+    <div class="container">
+        <!-- ORDERS -->
+        <div class="tab-panel active" id="tab-orders">
+            <div class="filters">
+                <select id="aFilterStatus"><option value="">Барлық статустар</option><option value="new">Жаңа</option><option value="processing">Өңделуде</option><option value="shipped">Жіберілді</option><option value="delivered">Жеткізілді</option><option value="cancelled">Бас тартылды</option></select>
+                <select id="aFilterManager"><option value="">Барлық менеджерлер</option></select>
+                <input type="date" id="aFilterFrom">
+                <input type="date" id="aFilterTo">
+                <button class="btn btn-primary btn-sm" onclick="loadAdminOrders()">Фильтрлеу</button>
+            </div>
+            <div id="adminOrdersList"></div>
+        </div>
+
+        <!-- STATS -->
+        <div class="tab-panel" id="tab-stats">
+            <div class="filters">
+                <input type="date" id="statFrom">
+                <input type="date" id="statTo">
+                <select id="statManager"><option value="">Барлық менеджерлер</option></select>
+                <button class="btn btn-primary btn-sm" onclick="loadStatistics()">Көрсету</button>
+            </div>
+            <div class="stat-grid" id="statCards"></div>
+            <div class="chart-container">
+                <h3>Статустар бойынша бөлінісі</h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Төлем түрлері бойынша</h3>
+                <canvas id="paymentChart"></canvas>
+            </div>
+            <div class="card">
+                <h2>Менеджерлер айлығы — <span id="pctDisplay">10</span>%</h2>
+                <table class="salary-table">
+                    <thead><tr><th>Менеджер</th><th>Барлығы</th><th>Жеткізілген</th><th>Сату сомасы</th><th>Айлық</th></tr></thead>
+                    <tbody id="salaryTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CLIENTS -->
+        <div class="tab-panel" id="tab-clients">
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Клиенттер тізімі</h2>
+            </div>
+            <div id="clientsList"></div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div class="tab-panel" id="tab-settings">
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Жалпы баптау</h2>
+                <div class="form-grid">
+                    <div class="field"><label>Компания аты</label><input type="text" id="sCompanyName"></div>
+                    <div class="field"><label>Дефолт пайыз (%)</label><input type="number" id="sPercentage" min="0" max="100" inputmode="numeric"></div>
+                    <div class="field"><label>Админ паролі</label><input type="text" id="sAdminPassword"></div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:8px">Сақтау</button>
+            </div>
+
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Менеджерлер</h2>
+                <div class="inline-form">
+                    <div class="field"><label>Аты</label><input type="text" id="newMgrName" placeholder="Менеджер аты"></div>
+                    <div class="field"><label>Телефон</label><input type="tel" id="newMgrPhone" placeholder="+7 (___) ___-____" inputmode="numeric" maxlength="18"></div>
+                    <button class="btn btn-primary" onclick="addManager()">Қосу</button>
+                </div>
+                <div style="overflow-x:auto">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Аты</th><th>Телефон</th><th>Белсенді</th><th></th></tr></thead>
+                    <tbody id="mgrTable"></tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Тауарлар</h2>
+                <div class="inline-form">
+                    <div class="field"><label>Атауы</label><input type="text" id="newProdName" placeholder="Тауар атауы"></div>
+                    <div class="field"><label>Бағасы</label><input type="text" id="newProdPrice" placeholder="0" inputmode="numeric"></div>
+                    <button class="btn btn-primary" onclick="addProduct()">Қосу</button>
+                </div>
+                <div style="overflow-x:auto">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Атауы</th><th>Бағасы</th><th>Белсенді</th><th></th></tr></thead>
+                    <tbody id="prodTable"></tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="2"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="20" cy="20" r="2"/></svg>Жеткізу түрлері</h2>
+                <div class="inline-form">
+                    <div class="field"><label>Атауы</label><input type="text" id="newDtName" placeholder="Жеткізу түрі"></div>
+                    <div class="field"><label>Қосымша өріс</label><input type="text" id="newDtExtra" placeholder="Мыс: Трек коды"></div>
+                    <button class="btn btn-primary" onclick="addDeliveryType()">Қосу</button>
+                </div>
+                <div style="overflow-x:auto">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Атауы</th><th>Қосымша өріс</th><th>Белсенді</th></tr></thead>
+                    <tbody id="dtTable"></tbody>
+                </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Төлем түрлері</h2>
+                <div class="inline-form">
+                    <div class="field"><label>Атауы</label><input type="text" id="newPtName" placeholder="Төлем түрі"></div>
+                    <button class="btn btn-primary" onclick="addPaymentType()">Қосу</button>
+                </div>
+                <div style="overflow-x:auto">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>Атауы</th><th>Белсенді</th><th></th></tr></thead>
+                    <tbody id="ptTable"></tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Order Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-sheet">
+            <h3>Тапсырысты өзгерту</h3>
+            <input type="hidden" id="eId">
+            <div class="form-grid">
+                <div class="field"><label>Менеджер</label><select id="eManager"></select></div>
+                <div class="field"><label>Клиент аты</label><input type="text" id="eName"></div>
+                <div class="field"><label>Телефон</label><input type="tel" id="ePhone" inputmode="numeric" maxlength="18"></div>
+                <div class="field"><label>Мекенжай</label><input type="text" id="eAddress"></div>
+                <div class="field"><label>Статус</label>
+                    <select id="eStatus"><option value="new">Жаңа</option><option value="processing">Өңделуде</option><option value="shipped">Жіберілді</option><option value="delivered">Жеткізілді</option><option value="cancelled">Бас тартылды</option></select>
+                </div>
+                <div class="field"><label>Бағасы</label><input type="text" id="ePrice" inputmode="numeric"></div>
+                <div class="field"><label>Жеткізу түрі</label><select id="eDelivery" onchange="updateEExtra()"></select></div>
+                <div class="field" id="eExtraGroup" style="display:none"><label id="eExtraLabel">Қосымша</label><input type="text" id="eExtra"></div>
+                <div class="field"><label>Төлем түрі</label><select id="ePayment"></select></div>
+                <div class="field"><label>Жіберілген күні</label><input type="date" id="eShipDate"></div>
+            </div>
+            <div class="field"><label>Ескерту</label><textarea id="eNotes" rows="2" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px"></textarea></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEditModal()">Бас тарту</button>
+                <button class="btn-save" onclick="saveOrderEdit()">Сақтау</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL='https://jnuokhhqojlurvadcduv.supabase.co';
+        const SUPABASE_KEY='sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk';
+        const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+        // Auth check
+        if(localStorage.getItem('eskhat_admin_auth')!=='true'){window.location.href='index.html';}
+        function logout(){localStorage.removeItem('eskhat_admin_auth');window.location.href='index.html';}
+
+        let allManagers=[],allProducts=[],allDeliveryTypes=[],allPaymentTypes=[];
+        let statusChart=null,paymentChart=null;
+
+        // Phone mask util
+        function formatPhone(v){let d=v.replace(/\D/g,'');if(d.startsWith('8'))d='7'+d.slice(1);if(!d.startsWith('7'))d='7'+d;d=d.slice(0,11);let r='+7';if(d.length>1)r+=' ('+d.slice(1,4);if(d.length>4)r+=') '+d.slice(4,7);if(d.length>7)r+='-'+d.slice(7,9);if(d.length>9)r+='-'+d.slice(9,11);return r;}
+        document.querySelectorAll('input[type=tel]').forEach(inp=>{
+            inp.addEventListener('input',function(){this.value=formatPhone(this.value)});
+            inp.addEventListener('focus',function(){if(!this.value)this.value='+7 ('});
+        });
+
+        // Price fields — only numbers
+        document.querySelectorAll('#newProdPrice,#ePrice').forEach(inp=>{
+            inp.addEventListener('input',function(){this.value=this.value.replace(/[^\d]/g,'')});
+        });
+
+        // Tabs
+        function showTab(tab){
+            document.querySelectorAll('.nav-tabs button').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+            document.querySelector(`.nav-tabs button[onclick="showTab('${tab}')"]`).classList.add('active');
+            document.getElementById('tab-'+tab).classList.add('active');
+            if(tab==='stats')loadStatistics();
+            if(tab==='settings')loadSettingsData();
+            if(tab==='clients')loadClients();
+            if(tab==='orders')loadAdminOrders();
+        }
+
+        // DATA LOADING
+        async function loadAllData(){
+            const [m,p,dt,pt]=await Promise.all([
+                sb.from('eseke-managers').select('*').order('name'),
+                sb.from('eseke-products').select('*').order('name'),
+                sb.from('eseke-delivery-types').select('*').order('name'),
+                sb.from('eseke-payment-types').select('*').order('name')
+            ]);
+            allManagers=m.data||[];
+            allProducts=p.data||[];
+            allDeliveryTypes=dt.data||[];
+            allPaymentTypes=pt.data||[];
+            populateFilters();
+            loadAdminOrders();
+        }
+
+        function populateFilters(){
+            ['aFilterManager','statManager'].forEach(id=>{
+                const s=document.getElementById(id);
+                s.innerHTML='<option value="">Барлық менеджерлер</option>';
+                allManagers.filter(m=>m.active).forEach(m=>s.innerHTML+=`<option value="${m.id}">${m.name}</option>`);
+            });
+            // Edit modal selects
+            const eM=document.getElementById('eManager');
+            eM.innerHTML='<option value="">Таңдаңыз</option>';
+            allManagers.forEach(m=>eM.innerHTML+=`<option value="${m.id}">${m.name}</option>`);
+
+            const eD=document.getElementById('eDelivery');
+            eD.innerHTML='<option value="">— таңдаңыз —</option>';
+            allDeliveryTypes.forEach(d=>eD.innerHTML+=`<option value="${d.id}" data-extra="${d.extra_field_name||''}">${d.name}</option>`);
+
+            const eP=document.getElementById('ePayment');
+            eP.innerHTML='<option value="">— таңдаңыз —</option>';
+            allPaymentTypes.forEach(p=>eP.innerHTML+=`<option value="${p.id}">${p.name}</option>`);
+        }
+
+        // ORDERS
+        async function loadAdminOrders(){
+            const status=document.getElementById('aFilterStatus').value;
+            const mgr=document.getElementById('aFilterManager').value;
+            const from=document.getElementById('aFilterFrom').value;
+            const to=document.getElementById('aFilterTo').value;
+
+            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-delivery-types(name, extra_field_name), eseke-payment-types(name)').order('created_at',{ascending:false}).limit(300);
+            if(status)q=q.eq('status',status);
+            if(mgr)q=q.eq('manager_id',parseInt(mgr));
+            if(from)q=q.gte('created_at',from+'T00:00:00');
+            if(to)q=q.lte('created_at',to+'T23:59:59');
+
+            const{data:orders}=await q;
+            const list=document.getElementById('adminOrdersList');
+            if(!orders||!orders.length){list.innerHTML='<div style="text-align:center;padding:40px;color:#ccc">Тапсырыстар табылмады</div>';return}
+
+            const sText={new:'Жаңа',processing:'Өңделуде',shipped:'Жіберілді',delivered:'Жеткізілді',cancelled:'Бас тартылды'};
+            const sCls={new:'s-new',processing:'s-processing',shipped:'s-shipped',delivered:'s-delivered',cancelled:'s-cancelled'};
+
+            list.innerHTML=orders.map(o=>{
+                let prods=[];try{prods=JSON.parse(o.products_json||'[]')}catch(e){}
+                const prodsStr=prods.map(p=>`${p.product_name} × ${p.quantity}`).join(', ')||'-';
+                const mName=o['eseke-managers']?.name||'-';
+                const dName=o['eseke-delivery-types']?.name||'-';
+                const pName=o['eseke-payment-types']?.name||'-';
+                const oJson=JSON.stringify({id:o.id,manager_id:o.manager_id,customer_name:o.customer_name,customer_phone:o.customer_phone||'',customer_address:o.customer_address||'',status:o.status,total_price:o.total_price,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||'',payment_type_id:o.payment_type_id,shipped_date:o.shipped_date||'',notes:o.notes||''}).replace(/'/g,"\\'");
+                return `
+                <div class="order-card status-${o.status}">
+                    <div class="order-top">
+                        <span class="order-id">#${o.id} • ${new Date(o.created_at).toLocaleDateString('kk-KZ')}</span>
+                        <span class="order-status ${sCls[o.status]}">${sText[o.status]}</span>
+                    </div>
+                    <div class="order-client">${o.customer_name}</div>
+                    <div class="order-detail">Телефон: <span>${o.customer_phone||'-'}</span></div>
+                    <div class="order-detail">Менеджер: <span>${mName}</span></div>
+                    <div class="order-detail">Тауарлар: <span>${prodsStr}</span></div>
+                    <div class="order-detail">Жеткізу: <span>${dName}</span> | Төлем: <span>${pName}</span></div>
+                    ${o.delivery_extra_value?`<div class="order-detail">${o['eseke-delivery-types']?.extra_field_name||''}: <span>${o.delivery_extra_value}</span></div>`:''}
+                    <div class="order-price">${Number(o.total_price||0).toLocaleString()} ₸</div>
+                    <div class="order-actions">
+                        <button class="btn btn-outline btn-sm" onclick='openEditModal(JSON.parse(atob("${btoa(JSON.stringify({id:o.id,manager_id:o.manager_id,customer_name:o.customer_name,customer_phone:o.customer_phone||'',customer_address:o.customer_address||'',status:o.status,total_price:o.total_price,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||'',payment_type_id:o.payment_type_id,shipped_date:o.shipped_date||'',notes:o.notes||''}))}")))'>Өзгерту</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">Өшіру</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function updateEExtra(){
+            const sel=document.getElementById('eDelivery');
+            const opt=sel.options[sel.selectedIndex];
+            const extra=opt?.dataset?.extra;
+            const g=document.getElementById('eExtraGroup');
+            if(extra){g.style.display='block';document.getElementById('eExtraLabel').textContent=extra}
+            else{g.style.display='none'}
+        }
+
+        function openEditModal(o){
+            document.getElementById('eId').value=o.id;
+            document.getElementById('eManager').value=o.manager_id||'';
+            document.getElementById('eName').value=o.customer_name;
+            document.getElementById('ePhone').value=o.customer_phone;
+            document.getElementById('eAddress').value=o.customer_address;
+            document.getElementById('eStatus').value=o.status;
+            document.getElementById('ePrice').value=o.total_price;
+            document.getElementById('eDelivery').value=o.delivery_type_id||'';
+            document.getElementById('eExtra').value=o.delivery_extra_value;
+            document.getElementById('ePayment').value=o.payment_type_id||'';
+            document.getElementById('eShipDate').value=o.shipped_date;
+            document.getElementById('eNotes').value=o.notes;
+            updateEExtra();
+            document.getElementById('editModal').classList.add('active');
+        }
+        function closeEditModal(){document.getElementById('editModal').classList.remove('active')}
+        document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeEditModal()});
+
+        async function saveOrderEdit(){
+            const id=parseInt(document.getElementById('eId').value);
+            const update={
+                manager_id:document.getElementById('eManager').value?parseInt(document.getElementById('eManager').value):null,
+                customer_name:document.getElementById('eName').value,
+                customer_phone:document.getElementById('ePhone').value,
+                customer_address:document.getElementById('eAddress').value,
+                status:document.getElementById('eStatus').value,
+                total_price:parseInt(document.getElementById('ePrice').value)||0,
+                delivery_type_id:document.getElementById('eDelivery').value?parseInt(document.getElementById('eDelivery').value):null,
+                delivery_extra_value:document.getElementById('eExtra').value||null,
+                payment_type_id:document.getElementById('ePayment').value?parseInt(document.getElementById('ePayment').value):null,
+                shipped_date:document.getElementById('eShipDate').value||null,
+                notes:document.getElementById('eNotes').value
+            };
+            const{error}=await sb.from('eseke-orders').update(update).eq('id',id);
+            if(error){alert('Қате: '+error.message);return}
+            closeEditModal();
+            loadAdminOrders();
+        }
+
+        async function deleteOrder(id){
+            if(!confirm('Тапсырысты өшіруге сенімдісіз бе?'))return;
+            await sb.from('eseke-orders').delete().eq('id',id);
+            loadAdminOrders();
+        }
+
+        // STATISTICS
+        async function loadStatistics(){
+            const from=document.getElementById('statFrom').value;
+            const to=document.getElementById('statTo').value;
+            const mgr=document.getElementById('statManager').value;
+
+            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-payment-types(name)');
+            if(from)q=q.gte('created_at',from+'T00:00:00');
+            if(to)q=q.lte('created_at',to+'T23:59:59');
+            if(mgr)q=q.eq('manager_id',parseInt(mgr));
+
+            const{data:orders}=await q;
+            const all=orders||[];
+
+            // Settings
+            const{data:sData}=await sb.from('eseke-settings').select('*');
+            const settings={};
+            (sData||[]).forEach(s=>settings[s.setting_key]=s.setting_value);
+            const pct=parseFloat(settings.default_percentage||10);
+            document.getElementById('pctDisplay').textContent=pct;
+
+            // Stat cards
+            const totalOrders=all.length;
+            const delivered=all.filter(o=>o.status==='delivered');
+            const totalSales=delivered.reduce((s,o)=>s+(parseInt(o.total_price)||0),0);
+            const newCount=all.filter(o=>o.status==='new').length;
+            const cancelledCount=all.filter(o=>o.status==='cancelled').length;
+
+            document.getElementById('statCards').innerHTML=`
+                <div class="stat-card"><h3>${totalOrders}</h3><p>Барлық тапсырыс</p></div>
+                <div class="stat-card success"><h3>${delivered.length}</h3><p>Жеткізілген</p></div>
+                <div class="stat-card" style="border-top-color:#1a5c3a"><h3>${totalSales.toLocaleString()} ₸</h3><p>Жалпы сату</p></div>
+                <div class="stat-card info"><h3>${newCount}</h3><p>Жаңа</p></div>
+            `;
+
+            // Status chart
+            const statusCounts={new:0,processing:0,shipped:0,delivered:0,cancelled:0};
+            all.forEach(o=>statusCounts[o.status]=(statusCounts[o.status]||0)+1);
+            if(statusChart)statusChart.destroy();
+            statusChart=new Chart(document.getElementById('statusChart'),{
+                type:'doughnut',
+                data:{
+                    labels:['Жаңа','Өңделуде','Жіберілді','Жеткізілді','Бас тартылды'],
+                    datasets:[{data:Object.values(statusCounts),backgroundColor:['#2196f3','#ff9800','#4caf50','#1a5c3a','#dc3545'],borderWidth:0}]
+                },
+                options:{responsive:true,plugins:{legend:{position:'bottom',labels:{padding:12,usePointStyle:true,font:{size:11,family:'Inter'}}}}}
+            });
+
+            // Payment chart
+            const payMap={};
+            all.forEach(o=>{const n=o['eseke-payment-types']?.name||'Белгісіз';payMap[n]=(payMap[n]||0)+1});
+            if(paymentChart)paymentChart.destroy();
+            const payColors=['#1a5c3a','#2196f3','#ff9800','#9c27b0','#e91e63','#607d8b'];
+            paymentChart=new Chart(document.getElementById('paymentChart'),{
+                type:'bar',
+                data:{
+                    labels:Object.keys(payMap),
+                    datasets:[{data:Object.values(payMap),backgroundColor:payColors.slice(0,Object.keys(payMap).length),borderRadius:6,barThickness:30}]
+                },
+                options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter',size:11}}}}}
+            });
+
+            // Salary table
+            const mgrStats={};
+            allManagers.filter(m=>m.active).forEach(m=>mgrStats[m.id]={name:m.name,total:0,delivered:0,sales:0});
+            all.forEach(o=>{
+                if(mgrStats[o.manager_id]){
+                    mgrStats[o.manager_id].total++;
+                    if(o.status==='delivered'){
+                        mgrStats[o.manager_id].delivered++;
+                        mgrStats[o.manager_id].sales+=(parseInt(o.total_price)||0);
+                    }
+                }
+            });
+            document.getElementById('salaryTable').innerHTML=Object.values(mgrStats).map(m=>`
+                <tr>
+                    <td>${m.name}</td>
+                    <td>${m.total}</td>
+                    <td>${m.delivered}</td>
+                    <td>${m.sales.toLocaleString()} ₸</td>
+                    <td class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</td>
+                </tr>
+            `).join('');
+        }
+
+        // CLIENTS
+        async function loadClients(){
+            const{data:orders}=await sb.from('eseke-orders').select('customer_name,customer_phone,total_price,status');
+            const map={};
+            (orders||[]).forEach(o=>{
+                const key=o.customer_phone||o.customer_name;
+                if(!map[key])map[key]={name:o.customer_name,phone:o.customer_phone||'',count:0,total:0};
+                map[key].count++;
+                if(o.status==='delivered')map[key].total+=(parseInt(o.total_price)||0);
+            });
+            const clients=Object.values(map).sort((a,b)=>b.count-a.count);
+            document.getElementById('clientsList').innerHTML=clients.length?clients.map(c=>`
+                <div class="client-card">
+                    <div class="client-info"><h4>${c.name}</h4><p>${c.phone}</p></div>
+                    <div class="client-stat"><div class="count">${c.count}</div><div class="amount">${c.total.toLocaleString()} ₸</div></div>
+                </div>
+            `).join(''):'<div style="text-align:center;padding:40px;color:#ccc">Клиенттер табылмады</div>';
+        }
+
+        // SETTINGS
+        async function loadSettingsData(){
+            const{data:sData}=await sb.from('eseke-settings').select('*');
+            const s={};(sData||[]).forEach(r=>s[r.setting_key]=r.setting_value);
+            document.getElementById('sCompanyName').value=s.company_name||'';
+            document.getElementById('sPercentage').value=s.default_percentage||10;
+            document.getElementById('sAdminPassword').value=s.admin_password||'123456';
+
+            // Managers table
+            const{data:mgrs}=await sb.from('eseke-managers').select('*').order('name');
+            document.getElementById('mgrTable').innerHTML=(mgrs||[]).map(m=>`
+                <tr>
+                    <td>${m.id}</td><td>${m.name}</td><td>${m.phone||'-'}</td>
+                    <td><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></td>
+                </tr>
+            `).join('');
+
+            // Products table
+            const{data:prods}=await sb.from('eseke-products').select('*').order('name');
+            document.getElementById('prodTable').innerHTML=(prods||[]).map(p=>`
+                <tr>
+                    <td>${p.id}</td><td>${p.name}</td><td>${Number(p.price||0).toLocaleString()} ₸</td>
+                    <td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="toggleProduct(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Өшіру</button></td>
+                </tr>
+            `).join('');
+
+            // Delivery types
+            const{data:dts}=await sb.from('eseke-delivery-types').select('*').order('name');
+            document.getElementById('dtTable').innerHTML=(dts||[]).map(d=>`
+                <tr>
+                    <td>${d.id}</td><td>${d.name}</td><td>${d.extra_field_name||'-'}</td>
+                    <td><span class="${d.active?'badge-active':'badge-inactive'}" onclick="toggleDeliveryType(${d.id},${d.active})">${d.active?'Белсенді':'Өшірулі'}</span></td>
+                </tr>
+            `).join('');
+
+            // Payment types
+            const{data:pts}=await sb.from('eseke-payment-types').select('*').order('name');
+            document.getElementById('ptTable').innerHTML=(pts||[]).map(p=>`
+                <tr>
+                    <td>${p.id}</td><td>${p.name}</td>
+                    <td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="togglePaymentType(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deletePaymentType(${p.id})">Өшіру</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function saveSettings(){
+            const items=[
+                {setting_key:'company_name',setting_value:document.getElementById('sCompanyName').value},
+                {setting_key:'default_percentage',setting_value:document.getElementById('sPercentage').value},
+                {setting_key:'admin_password',setting_value:document.getElementById('sAdminPassword').value}
+            ];
+            for(const item of items){
+                await sb.from('eseke-settings').upsert(item,{onConflict:'setting_key'});
+            }
+            alert('Сақталды!');
+        }
+
+        // CRUD functions
+        async function addManager(){
+            const name=document.getElementById('newMgrName').value.trim();
+            const phone=document.getElementById('newMgrPhone').value.trim();
+            if(!name)return alert('Атын енгізіңіз');
+            await sb.from('eseke-managers').insert([{name,phone,active:true}]);
+            document.getElementById('newMgrName').value='';document.getElementById('newMgrPhone').value='';
+            loadSettingsData();loadAllData();
+        }
+        async function toggleManager(id,cur){await sb.from('eseke-managers').update({active:!cur}).eq('id',id);loadSettingsData()}
+        async function deleteManager(id){if(!confirm('Өшіру?'))return;await sb.from('eseke-managers').delete().eq('id',id);loadSettingsData();loadAllData()}
+
+        async function addProduct(){
+            const name=document.getElementById('newProdName').value.trim();
+            const price=parseInt(document.getElementById('newProdPrice').value)||0;
+            if(!name)return alert('Атауын енгізіңіз');
+            await sb.from('eseke-products').insert([{name,price,active:true}]);
+            document.getElementById('newProdName').value='';document.getElementById('newProdPrice').value='';
+            loadSettingsData();loadAllData();
+        }
+        async function toggleProduct(id,cur){await sb.from('eseke-products').update({active:!cur}).eq('id',id);loadSettingsData()}
+        async function deleteProduct(id){if(!confirm('Өшіру?'))return;await sb.from('eseke-products').delete().eq('id',id);loadSettingsData();loadAllData()}
+
+        async function addDeliveryType(){
+            const name=document.getElementById('newDtName').value.trim();
+            const extra=document.getElementById('newDtExtra').value.trim();
+            if(!name)return alert('Атауын енгізіңіз');
+            await sb.from('eseke-delivery-types').insert([{name,extra_field_name:extra||null,active:true}]);
+            document.getElementById('newDtName').value='';document.getElementById('newDtExtra').value='';
+            loadSettingsData();loadAllData();
+        }
+        async function toggleDeliveryType(id,cur){await sb.from('eseke-delivery-types').update({active:!cur}).eq('id',id);loadSettingsData()}
+
+        async function addPaymentType(){
+            const name=document.getElementById('newPtName').value.trim();
+            if(!name)return alert('Атауын енгізіңіз');
+            await sb.from('eseke-payment-types').insert([{name,active:true}]);
+            document.getElementById('newPtName').value='';
+            loadSettingsData();loadAllData();
+        }
+        async function togglePaymentType(id,cur){await sb.from('eseke-payment-types').update({active:!cur}).eq('id',id);loadSettingsData()}
+        async function deletePaymentType(id){if(!confirm('Өшіру?'))return;await sb.from('eseke-payment-types').delete().eq('id',id);loadSettingsData();loadAllData()}
+
+        loadAllData();
+    </script>
+</body>
+</html>

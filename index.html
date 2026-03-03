@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESKHAT Orders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;color:#1a1a1a;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+        .logo-section{margin-top:60px;text-align:center}
+        .logo-circle{width:90px;height:90px;border-radius:50%;border:3px solid #1a5c3a;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:#fff}
+        .logo-circle span{font-size:28px;font-weight:700;color:#1a5c3a;letter-spacing:1px}
+        .company-name{font-size:22px;font-weight:700;color:#1a1a1a;letter-spacing:1px}
+        .section-title{font-size:11px;font-weight:600;letter-spacing:2px;color:#888;text-transform:uppercase;margin:48px 0 20px;text-align:left;width:100%;max-width:420px;padding:0 16px}
+        .cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:420px;padding:0 16px}
+        .link-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.06);text-decoration:none;color:#1a1a1a;transition:box-shadow .2s,transform .2s;cursor:pointer;display:flex;flex-direction:column}
+        .link-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.1);transform:translateY(-2px)}
+        .card-preview{width:100%;aspect-ratio:4/3;background:#f0f0f0;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+        .card-preview svg{width:48px;height:48px;opacity:0.4}
+        .card-label{padding:12px 14px;font-size:13px;font-weight:600;color:#333}
+        .more-links{margin:30px 0 60px;width:100%;max-width:420px;padding:0 16px}
+        .more-btn{width:100%;padding:14px;background:#f5f5f5;border:1.5px dashed #ccc;border-radius:12px;text-align:center;color:#1a5c3a;font-weight:600;font-size:13px;cursor:pointer;transition:background .2s}
+        .more-btn:hover{background:#eafaf0}
+
+        /* Password modal */
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal-overlay.active{display:flex}
+        .modal-box{background:#fff;border-radius:16px;padding:36px 28px;width:90%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.15)}
+        .modal-box h3{font-size:18px;font-weight:700;margin-bottom:8px;color:#1a1a1a}
+        .modal-box p{font-size:13px;color:#888;margin-bottom:24px}
+        .modal-box input{width:100%;padding:14px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s;text-align:center;letter-spacing:2px}
+        .modal-box input:focus{border-color:#1a5c3a}
+        .modal-box .modal-btn{width:100%;padding:14px;background:#1a5c3a;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:16px;transition:background .2s}
+        .modal-box .modal-btn:hover{background:#14472e}
+        .modal-error{color:#dc3545;font-size:12px;margin-top:10px;display:none}
+
+        @media(max-width:480px){
+            .logo-section{margin-top:40px}
+            .logo-circle{width:72px;height:72px}
+            .logo-circle span{font-size:22px}
+            .company-name{font-size:18px}
+            .cards-grid{gap:10px}
+            .card-label{font-size:12px;padding:10px 12px}
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-section">
+        <div class="logo-circle"><span>JR</span></div>
+        <div class="company-name">JET Republic</div>
+    </div>
+
+    <div class="section-title">Маңызды сілтемелер</div>
+
+    <div class="cards-grid">
+        <a href="manager.html" class="link-card">
+            <div class="card-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="13" y2="12"/><line x1="7" y1="16" x2="15" y2="16"/></svg>
+            </div>
+            <div class="card-label">Тапсырыс қосу</div>
+        </a>
+        <div class="link-card" onclick="openAdminAuth()">
+            <div class="card-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M6 20c0-3 3-5 6-5s6 2 6 5"/></svg>
+            </div>
+            <div class="card-label">Админ панель</div>
+        </div>
+        <a href="logistics.html" class="link-card">
+            <div class="card-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5"><rect x="1" y="6" width="15" height="12" rx="2"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="20" cy="20" r="2"/></svg>
+            </div>
+            <div class="card-label">Логистика</div>
+        </a>
+        <a href="manager.html" class="link-card">
+            <div class="card-preview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <div class="card-label">Тапсырыстар тізімі</div>
+        </a>
+    </div>
+
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-box">
+            <h3>Админ панель</h3>
+            <p>Кіру үшін парольді енгізіңіз</p>
+            <input type="password" id="adminPassword" placeholder="Пароль" autocomplete="off">
+            <div class="modal-error" id="authError">Пароль қате!</div>
+            <button class="modal-btn" onclick="checkAdminPassword()">Кіру</button>
+            <button class="modal-btn" style="background:#eee;color:#333;margin-top:8px" onclick="closeAuthModal()">Бас тарту</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://jnuokhhqojlurvadcduv.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk';
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function openAdminAuth(){
+            if(localStorage.getItem('eskhat_admin_auth') === 'true'){
+                window.location.href = 'admin.html';
+                return;
+            }
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('adminPassword').focus();
+        }
+        function closeAuthModal(){
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('authError').style.display = 'none';
+        }
+        async function checkAdminPassword(){
+            const pw = document.getElementById('adminPassword').value;
+            const {data} = await sb.from('eseke-settings').select('setting_value').eq('setting_key','admin_password').single();
+            const correctPw = data?.setting_value || '123456';
+            if(pw === correctPw){
+                localStorage.setItem('eskhat_admin_auth','true');
+                window.location.href = 'admin.html';
+            } else {
+                document.getElementById('authError').style.display = 'block';
+            }
+        }
+        document.getElementById('adminPassword').addEventListener('keydown', e=>{if(e.key==='Enter')checkAdminPassword()});
+    </script>
+</body>
+</html>

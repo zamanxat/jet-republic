@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JET Republic — Тапсырыс</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#fafafa;color:#1a1a1a;min-height:100vh}
+        .top-bar{display:flex;align-items:center;padding:16px 20px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
+        .top-bar .back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;margin-right:12px}
+        .top-bar .back-btn svg{width:20px;height:20px}
+        .top-bar .logo{display:flex;align-items:center;gap:10px}
+        .top-bar .logo-circle{width:36px;height:36px;border-radius:50%;border:2px solid #1a5c3a;display:flex;align-items:center;justify-content:center}
+        .top-bar .logo-circle span{font-size:12px;font-weight:700;color:#1a5c3a}
+        .top-bar .logo-text{font-size:17px;font-weight:700;color:#1a5c3a;letter-spacing:1px}
+
+        .container{max-width:640px;margin:0 auto;padding:20px 16px 100px}
+        .section-label{font-size:10px;font-weight:600;letter-spacing:2px;color:#999;text-transform:uppercase;margin:28px 0 10px}
+        .section-label:first-of-type{margin-top:8px}
+
+        .field{position:relative;margin-bottom:14px}
+        .field input,.field select,.field textarea{width:100%;padding:14px 16px;border:1.5px solid #ddd;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;background:#fff;outline:none;transition:border-color .2s;color:#1a1a1a;-webkit-appearance:none;appearance:none}
+        .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:#1a5c3a}
+        .field input::placeholder,.field textarea::placeholder{color:#bbb}
+
+        /* Products area */
+        .products-list{margin-bottom:10px}
+        .product-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+        .product-row select{flex:1}
+        .product-row .qty-input{width:60px;text-align:center}
+        .remove-btn{width:36px;height:36px;border-radius:50%;border:none;background:#ffeaea;color:#d44;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+        .remove-btn:hover{background:#ffcccc}
+
+        .add-btn{width:100%;padding:14px;border:2px dashed #1a5c3a;border-radius:12px;background:transparent;color:#1a5c3a;font-size:13px;font-weight:600;cursor:pointer;transition:background .2s;margin-bottom:8px}
+        .add-btn:hover{background:#eafaf0}
+
+        .checkbox-row{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#eafaf0;border-radius:10px;margin-bottom:14px;cursor:pointer}
+        .checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:#1a5c3a}
+        .checkbox-row label{font-size:14px;font-weight:500;cursor:pointer;color:#333}
+
+        .datetime-field{display:none;margin-bottom:14px}
+        .datetime-field.visible{display:block}
+
+        /* Receipt upload */
+        .receipt-area{border:2px dashed #ddd;border-radius:12px;padding:24px;text-align:center;cursor:pointer;color:#aaa;font-size:13px;margin-bottom:14px;transition:border-color .2s}
+        .receipt-area:hover{border-color:#1a5c3a}
+        .receipt-area svg{width:24px;height:24px;margin-bottom:6px;opacity:0.4}
+
+        .price-box{border:2px solid #1a5c3a;border-radius:12px;padding:16px;margin-bottom:20px}
+        .price-box label{font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:8px}
+        .price-box input{width:100%;padding:12px;border:1px solid #eee;border-radius:8px;font-size:18px;font-weight:600;text-align:left;outline:none}
+
+        .submit-btn{width:100%;padding:16px;background:#1a3c2a;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:0.5px;transition:background .2s;text-transform:uppercase}
+        .submit-btn:hover{background:#14472e}
+        .submit-btn:disabled{background:#ccc;cursor:not-allowed}
+
+        /* Orders list */
+        .orders-section{margin-top:40px}
+        .order-card{background:#fff;border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06);border-left:4px solid #1a5c3a}
+        .order-card.status-new{border-left-color:#2196f3}
+        .order-card.status-processing{border-left-color:#ff9800}
+        .order-card.status-shipped{border-left-color:#4caf50}
+        .order-card.status-delivered{border-left-color:#1a5c3a}
+        .order-card.status-cancelled{border-left-color:#dc3545}
+        .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .order-id{font-size:12px;color:#999;font-weight:600}
+        .order-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+        .s-new{background:#e3f2fd;color:#1976d2}
+        .s-processing{background:#fff3e0;color:#f57c00}
+        .s-shipped{background:#e8f5e9;color:#388e3c}
+        .s-delivered{background:#c8e6c9;color:#2e7d32}
+        .s-cancelled{background:#ffebee;color:#c62828}
+        .order-client{font-size:15px;font-weight:600;margin-bottom:4px}
+        .order-phone{font-size:13px;color:#666;margin-bottom:8px}
+        .order-detail{font-size:12px;color:#888;margin-bottom:3px}
+        .order-detail span{color:#333;font-weight:500}
+        .order-price{font-size:18px;font-weight:700;color:#1a5c3a;margin-top:8px}
+        .order-delivery{font-size:12px;color:#888;margin-top:6px;padding-top:8px;border-top:1px solid #f0f0f0}
+        .order-delivery span{color:#333;font-weight:500}
+
+        .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+        .filter-bar select{padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;background:#fff;outline:none}
+        .filter-bar select:focus{border-color:#1a5c3a}
+
+        .empty-state{text-align:center;padding:40px 20px;color:#ccc}
+        .empty-state svg{width:48px;height:48px;margin-bottom:12px;opacity:0.3}
+        .empty-state p{font-size:14px}
+
+        .tabs-bar{display:flex;gap:0;background:#fff;border-radius:12px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+        .tabs-bar button{flex:1;padding:12px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;color:#888;transition:all .2s;font-family:'Inter',sans-serif}
+        .tabs-bar button.active{background:#1a5c3a;color:#fff}
+        .tab-panel{display:none}
+        .tab-panel.active{display:block}
+
+        @media(max-width:480px){
+            .container{padding:14px 12px 100px}
+            .product-row select{font-size:13px;padding:12px}
+            .order-card{padding:14px}
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+        <div class="logo">
+            <div class="logo-circle"><span>JR</span></div>
+            <div class="logo-text">JET Republic</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs-bar">
+            <button class="active" onclick="switchTab('form')">Тапсырыс қосу</button>
+            <button onclick="switchTab('list')">Тізім</button>
+        </div>
+
+        <!-- FORM TAB -->
+        <div class="tab-panel active" id="tab-form">
+            <div class="section-label">Жауапты тұлға</div>
+            <div class="field">
+                <select id="manager_id"><option value="">Менеджерді таңдаңыз...</option></select>
+            </div>
+
+            <div class="section-label">Тапсырыс уақыты</div>
+            <div class="checkbox-row" onclick="toggleDatetime(event)">
+                <input type="checkbox" id="customDateCheck">
+                <label for="customDateCheck">Уақытты қолмен таңдау</label>
+            </div>
+            <div class="datetime-field" id="datetimeField">
+                <div class="field">
+                    <input type="datetime-local" id="customDate">
+                </div>
+            </div>
+
+            <div class="section-label">Клиент мәліметі</div>
+            <div class="field">
+                <input type="text" id="customer_name" placeholder="Клиент аты-жөні">
+            </div>
+            <div class="field">
+                <input type="tel" id="customer_phone" placeholder="+7 (___) ___-____" inputmode="numeric" maxlength="18">
+            </div>
+            <div class="field">
+                <input type="text" id="customer_address" placeholder="Адрес (Қала, көше, үй)">
+            </div>
+
+            <div class="section-label">Тауарлар</div>
+            <div id="productsContainer"></div>
+            <button type="button" class="add-btn" onclick="addProductRow()">+ Тауар қосу</button>
+
+            <div class="section-label">Жеткізу және төлем</div>
+            <div class="field">
+                <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;color:#555">Жеткізу түрі:</label>
+                <select id="delivery_type"><option value="">— таңдаңыз —</option></select>
+            </div>
+            <div class="field">
+                <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block;color:#555">Төлем түрі:</label>
+                <select id="payment_type"><option value="">— таңдаңыз —</option></select>
+            </div>
+
+            <div class="price-box">
+                <label>Жалпы сатылған бағасы (₸):</label>
+                <input type="text" id="total_price" placeholder="0" inputmode="numeric">
+            </div>
+
+            <div class="field">
+                <textarea id="notes" rows="2" placeholder="Қосымша ескерту..." style="border-radius:10px;padding:14px 16px;border:1.5px solid #ddd;font-size:14px;font-family:'Inter',sans-serif;resize:vertical"></textarea>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="submitOrder()">Тапсырысты жіберу</button>
+        </div>
+
+        <!-- LIST TAB -->
+        <div class="tab-panel" id="tab-list">
+            <div class="filter-bar">
+                <select id="filterStatus">
+                    <option value="">Барлық статустар</option>
+                    <option value="new">Жаңа</option>
+                    <option value="processing">Өңделуде</option>
+                    <option value="shipped">Жіберілді</option>
+                    <option value="delivered">Жеткізілді</option>
+                    <option value="cancelled">Бас тартылды</option>
+                </select>
+                <select id="filterManager"><option value="">Барлық менеджерлер</option></select>
+            </div>
+            <div id="ordersList"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL='https://jnuokhhqojlurvadcduv.supabase.co';
+        const SUPABASE_KEY='sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk';
+        const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+        let managers=[], products=[], deliveryTypes=[], paymentTypes=[];
+        let productRowCount=0;
+
+        // Tab switching
+        function switchTab(tab){
+            document.querySelectorAll('.tabs-bar button').forEach((b,i)=>{b.classList.toggle('active',i===(tab==='form'?0:1))});
+            document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+            document.getElementById('tab-'+tab).classList.add('active');
+            if(tab==='list') loadOrders();
+        }
+
+        // Phone mask
+        function formatPhone(v){
+            let d=v.replace(/\D/g,'');
+            if(d.startsWith('8'))d='7'+d.slice(1);
+            if(!d.startsWith('7'))d='7'+d;
+            d=d.slice(0,11);
+            let r='+7';
+            if(d.length>1)r+=' ('+d.slice(1,4);
+            if(d.length>4)r+=') '+d.slice(4,7);
+            if(d.length>7)r+='-'+d.slice(7,9);
+            if(d.length>9)r+='-'+d.slice(9,11);
+            return r;
+        }
+        document.getElementById('customer_phone').addEventListener('input',function(e){
+            let pos=this.selectionStart;
+            let prev=this.value;
+            this.value=formatPhone(this.value);
+            if(this.value.length>prev.length)pos+=(this.value.length-prev.length);
+            this.setSelectionRange(pos,pos);
+        });
+        document.getElementById('customer_phone').addEventListener('focus',function(){
+            if(!this.value)this.value='+7 (';
+        });
+
+        // Price field — only numbers
+        document.getElementById('total_price').addEventListener('input',function(){
+            this.value=this.value.replace(/[^\d]/g,'');
+        });
+
+        // Toggle datetime
+        function toggleDatetime(e){
+            if(e.target.tagName==='LABEL')return;
+            const ch=document.getElementById('customDateCheck');
+            if(e.target!==ch)ch.checked=!ch.checked;
+            document.getElementById('datetimeField').classList.toggle('visible',ch.checked);
+        }
+
+        // Load data
+        async function loadData(){
+            const [m,p,dt,pt]=await Promise.all([
+                sb.from('eseke-managers').select('*').eq('active',true).order('name'),
+                sb.from('eseke-products').select('*').eq('active',true).order('name'),
+                sb.from('eseke-delivery-types').select('*').eq('active',true).order('name'),
+                sb.from('eseke-payment-types').select('*').eq('active',true).order('name')
+            ]);
+            managers=m.data||[];
+            products=p.data||[];
+            deliveryTypes=dt.data||[];
+            paymentTypes=pt.data||[];
+
+            const ms=document.getElementById('manager_id');
+            ms.innerHTML='<option value="">Менеджерді таңдаңыз...</option>';
+            managers.forEach(m=>ms.innerHTML+=`<option value="${m.id}">${m.name}</option>`);
+
+            const dts=document.getElementById('delivery_type');
+            dts.innerHTML='<option value="">— таңдаңыз —</option>';
+            deliveryTypes.forEach(d=>dts.innerHTML+=`<option value="${d.id}">${d.name}</option>`);
+
+            const pts=document.getElementById('payment_type');
+            pts.innerHTML='<option value="">— таңдаңыз —</option>';
+            paymentTypes.forEach(p=>pts.innerHTML+=`<option value="${p.id}">${p.name}</option>`);
+
+            const fm=document.getElementById('filterManager');
+            fm.innerHTML='<option value="">Барлық менеджерлер</option>';
+            managers.forEach(m=>fm.innerHTML+=`<option value="${m.id}">${m.name}</option>`);
+
+            if(document.querySelectorAll('.product-row').length===0) addProductRow();
+        }
+
+        function addProductRow(){
+            productRowCount++;
+            const div=document.createElement('div');
+            div.className='product-row';
+            div.id='prow-'+productRowCount;
+            let opts='<option value="">Таңдаңыз</option>';
+            products.forEach(p=>opts+=`<option value="${p.id}">${p.name}</option>`);
+            div.innerHTML=`
+                <div class="field" style="flex:1;margin:0"><select>${opts}</select></div>
+                <div class="field" style="width:60px;margin:0"><input type="number" class="qty-input" value="1" min="1" inputmode="numeric"></div>
+                <button type="button" class="remove-btn" onclick="removeProductRow('prow-${productRowCount}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            `;
+            document.getElementById('productsContainer').appendChild(div);
+        }
+        function removeProductRow(id){
+            const el=document.getElementById(id);
+            if(el && document.querySelectorAll('.product-row').length>1) el.remove();
+        }
+
+        async function submitOrder(){
+            const managerId=document.getElementById('manager_id').value;
+            const customerName=document.getElementById('customer_name').value.trim();
+            const customerPhone=document.getElementById('customer_phone').value.trim();
+            const customerAddress=document.getElementById('customer_address').value.trim();
+            const deliveryType=document.getElementById('delivery_type').value;
+            const paymentType=document.getElementById('payment_type').value;
+            const totalPrice=document.getElementById('total_price').value;
+            const notes=document.getElementById('notes').value.trim();
+
+            if(!managerId||!customerName||!customerPhone){
+                alert('Менеджер, клиент аты және телефон міндетті!');
+                return;
+            }
+
+            // Collect products
+            const rows=document.querySelectorAll('.product-row');
+            const items=[];
+            rows.forEach(r=>{
+                const sel=r.querySelector('select');
+                const qty=r.querySelector('.qty-input');
+                if(sel.value){
+                    const prod=products.find(p=>p.id==sel.value);
+                    items.push({product_id:parseInt(sel.value),product_name:prod?.name||'',quantity:parseInt(qty.value)||1});
+                }
+            });
+
+            let createdAt=undefined;
+            if(document.getElementById('customDateCheck').checked){
+                const cv=document.getElementById('customDate').value;
+                if(cv) createdAt=new Date(cv).toISOString();
+            }
+
+            const btn=document.getElementById('submitBtn');
+            btn.disabled=true;
+            btn.textContent='Жіберілуде...';
+
+            try{
+                const orderData={
+                    manager_id:parseInt(managerId),
+                    customer_name:customerName,
+                    customer_phone:customerPhone,
+                    customer_address:customerAddress,
+                    delivery_type_id:deliveryType?parseInt(deliveryType):null,
+                    payment_type_id:paymentType?parseInt(paymentType):null,
+                    total_price:parseInt(totalPrice)||0,
+                    notes:notes,
+                    status:'new',
+                    products_json:JSON.stringify(items)
+                };
+                if(createdAt) orderData.created_at=createdAt;
+
+                const {error}=await sb.from('eseke-orders').insert([orderData]);
+                if(error) throw error;
+
+                alert('Тапсырыс сәтті қосылды!');
+                document.getElementById('customer_name').value='';
+                document.getElementById('customer_phone').value='';
+                document.getElementById('customer_address').value='';
+                document.getElementById('total_price').value='';
+                document.getElementById('notes').value='';
+                document.getElementById('delivery_type').value='';
+                document.getElementById('payment_type').value='';
+                document.getElementById('productsContainer').innerHTML='';
+                addProductRow();
+            }catch(e){
+                alert('Қате: '+e.message);
+            }
+            btn.disabled=false;
+            btn.textContent='ТАПСЫРЫСТЫ ЖІБЕРУ';
+        }
+
+        async function loadOrders(){
+            const status=document.getElementById('filterStatus').value;
+            const managerId=document.getElementById('filterManager').value;
+
+            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-delivery-types(name, extra_field_name), eseke-payment-types(name)').order('created_at',{ascending:false}).limit(100);
+            if(status) q=q.eq('status',status);
+            if(managerId) q=q.eq('manager_id',managerId);
+
+            const {data:orders,error}=await q;
+            const list=document.getElementById('ordersList');
+            if(error||!orders||orders.length===0){
+                list.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><p>Тапсырыстар табылмады</p></div>';
+                return;
+            }
+
+            const statusText={new:'Жаңа',processing:'Өңделуде',shipped:'Жіберілді',delivered:'Жеткізілді',cancelled:'Бас тартылды'};
+            const statusCls={new:'s-new',processing:'s-processing',shipped:'s-shipped',delivered:'s-delivered',cancelled:'s-cancelled'};
+
+            list.innerHTML=orders.map(o=>{
+                let prods=[];
+                try{prods=JSON.parse(o.products_json||'[]')}catch(e){}
+                const prodsStr=prods.map(p=>`${p.product_name} × ${p.quantity}`).join(', ')||'-';
+                const mgrName=o['eseke-managers']?.name||'-';
+                const delName=o['eseke-delivery-types']?.name||'-';
+                const payName=o['eseke-payment-types']?.name||'-';
+                return `
+                <div class="order-card status-${o.status}">
+                    <div class="order-top">
+                        <span class="order-id">#${o.id}</span>
+                        <span class="order-status ${statusCls[o.status]}">${statusText[o.status]||o.status}</span>
+                    </div>
+                    <div class="order-client">${o.customer_name}</div>
+                    <div class="order-phone">${o.customer_phone||''}</div>
+                    <div class="order-detail">Менеджер: <span>${mgrName}</span></div>
+                    <div class="order-detail">Тауарлар: <span>${prodsStr}</span></div>
+                    <div class="order-detail">Жеткізу: <span>${delName}</span></div>
+                    <div class="order-detail">Төлем: <span>${payName}</span></div>
+                    ${o.delivery_extra_value?`<div class="order-detail">${o['eseke-delivery-types']?.extra_field_name||'Ақпарат'}: <span>${o.delivery_extra_value}</span></div>`:''}
+                    ${o.shipped_date?`<div class="order-detail">Жіберілген: <span>${o.shipped_date}</span></div>`:''}
+                    <div class="order-price">${Number(o.total_price||0).toLocaleString()} ₸</div>
+                    <div class="order-delivery">${new Date(o.created_at).toLocaleDateString('kk-KZ')} ${new Date(o.created_at).toLocaleTimeString('kk-KZ',{hour:'2-digit',minute:'2-digit'})}</div>
+                </div>`;
+            }).join('');
+        }
+
+        document.getElementById('filterStatus').addEventListener('change',loadOrders);
+        document.getElementById('filterManager').addEventListener('change',loadOrders);
+
+        loadData();
+    </script>
+</body>
+</html>
