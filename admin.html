@@ -2,146 +2,212 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESKHAT Orders — Админ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>JET Republic — Админ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root{--bg:#f0f4f2;--card:#fff;--primary:#0d4d2b;--primary-light:#166534;--primary-soft:#dcfce7;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--radius:16px;--radius-sm:12px;--shadow:0 1px 3px rgba(0,0,0,0.06)}
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'Inter',sans-serif;background:#fafafa;color:#1a1a1a;min-height:100vh}
-        .top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:100}
+        html{-webkit-text-size-adjust:100%}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
+        .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
         .top-bar-left{display:flex;align-items:center;gap:12px}
-        .top-bar .back-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:none;background:none;cursor:pointer;text-decoration:none}
-        .top-bar .back-btn svg{width:20px;height:20px}
-        .top-bar .title{font-size:17px;font-weight:700;color:#1a1a1a}
-        .logout-btn{padding:8px 14px;background:#f5f5f5;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;color:#888}
-        .logout-btn:hover{background:#eee}
+        .top-bar .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;text-decoration:none;transition:background .2s}
+        .top-bar .back-btn:hover{background:var(--border)}
+        .top-bar .back-btn svg{width:20px;height:20px;color:var(--text)}
+        .top-bar .title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:8px}
+        .logout-btn{padding:10px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;color:#b91c1c;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+        .logout-btn:hover{background:#fee2e2;color:#991b1b}
 
-        .nav-tabs{display:flex;background:#fff;border-bottom:1px solid #eee;overflow-x:auto;position:sticky;top:57px;z-index:99}
-        .nav-tabs button{padding:14px 18px;border:none;background:transparent;font-size:12px;font-weight:600;cursor:pointer;color:#888;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;font-family:'Inter',sans-serif}
-        .nav-tabs button.active{color:#1a5c3a;border-bottom-color:#1a5c3a}
+        .nav-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;position:sticky;top:73px;z-index:99;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .nav-tabs::-webkit-scrollbar{display:none}
+        .nav-tabs button{padding:14px 16px;min-height:48px;min-width:44px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;display:inline-flex;align-items:center;gap:6px}
+        .nav-tabs button.active{color:var(--primary);border-bottom-color:var(--primary)}
+        .nav-tabs button .ico{opacity:0.8}
+        .nav-tabs button.active .ico{color:var(--primary)}
 
-        .container{max-width:960px;margin:0 auto;padding:20px 16px 80px}
+        .container{max-width:960px;margin:0 auto;padding:24px 20px 80px}
         .tab-panel{display:none}
         .tab-panel.active{display:block}
 
-        .card{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-        .card h2{font-size:15px;font-weight:700;margin-bottom:16px;color:#333;padding-bottom:10px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:8px}
-        .card h2 svg{width:18px;height:18px;opacity:0.5}
+        .card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+        .card h2{font-size:16px;font-weight:700;margin-bottom:18px;color:var(--text);padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+        .card h2 svg{width:20px;height:20px;color:var(--primary);opacity:0.8}
 
-        .field{margin-bottom:14px}
-        .field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:6px}
-        .field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;outline:none;background:#fff}
-        .field input:focus,.field select:focus{border-color:#1a5c3a}
+        .field{margin-bottom:16px}
+        .field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px}
+        .field input,.field select,.field textarea{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:inherit;outline:none;background:var(--card);transition:border-color .2s}
+        .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
 
-        .btn{padding:10px 18px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
-        .btn-primary{background:#1a5c3a;color:#fff}
-        .btn-primary:hover{background:#14472e}
-        .btn-danger{background:#dc3545;color:#fff}
-        .btn-danger:hover{background:#c82333}
-        .btn-outline{background:#f5f5f5;color:#333;border:1px solid #ddd}
-        .btn-outline:hover{background:#eee}
-        .btn-sm{padding:6px 12px;font-size:11px}
+        .btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+        .btn-primary{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff}
+        .btn-primary:hover{opacity:.95}
+        .btn-danger{background:#dc2626;color:#fff}
+        .btn-danger:hover{background:#b91c1c}
+        .btn-outline{background:var(--bg);color:var(--text);border:2px solid var(--border)}
+        .btn-outline:hover{background:var(--border)}
+        .btn-sm{padding:8px 14px;font-size:12px}
 
-        .inline-form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px}
+        .inline-form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
         .inline-form .field{margin-bottom:0;flex:1;min-width:140px}
 
-        .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
-        .filters select,.filters input{padding:8px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;background:#fff;outline:none}
+        .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+        .filters select,.filters input{padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--card);outline:none}
+        .filters select:focus,.filters input:focus{border-color:var(--primary)}
 
-        /* Order cards */
-        .order-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);border-left:4px solid #ddd;position:relative}
+        .order-card{background:var(--card);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--border);border:1px solid var(--border);border-left-width:4px}
         .order-card.status-new{border-left-color:#2196f3}
-        .order-card.status-processing{border-left-color:#ff9800}
-        .order-card.status-shipped{border-left-color:#4caf50}
-        .order-card.status-delivered{border-left-color:#1a5c3a}
-        .order-card.status-cancelled{border-left-color:#dc3545}
-        .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .order-id{font-size:11px;color:#999;font-weight:600}
-        .order-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
-        .s-new{background:#e3f2fd;color:#1976d2}
-        .s-processing{background:#fff3e0;color:#f57c00}
-        .s-shipped{background:#e8f5e9;color:#388e3c}
-        .s-delivered{background:#c8e6c9;color:#2e7d32}
-        .s-cancelled{background:#ffebee;color:#c62828}
-        .order-client{font-size:14px;font-weight:600;margin-bottom:2px}
-        .order-detail{font-size:11px;color:#888;margin-bottom:2px}
-        .order-detail span{color:#333;font-weight:500}
-        .order-price{font-size:16px;font-weight:700;color:#1a5c3a;margin-top:6px}
-        .order-actions{display:flex;gap:6px;margin-top:10px}
+        .order-card.status-processing{border-left-color:#f59e0b}
+        .order-card.status-shipped{border-left-color:#22c55e}
+        .order-card.status-delivered{border-left-color:var(--primary)}
+        .order-card.status-cancelled{border-left-color:#dc2626}
+        .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .order-id{font-size:12px;color:var(--text-muted);font-weight:600}
+        .order-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px}
+        .s-new{background:#dbeafe;color:#1d4ed8}
+        .s-processing{background:#fef3c7;color:#b45309}
+        .s-shipped{background:#dcfce7;color:#15803d}
+        .s-delivered{background:#dcfce7;color:var(--primary)}
+        .s-cancelled{background:#fee2e2;color:#b91c1c}
+        .order-client{font-size:15px;font-weight:700;margin-bottom:4px}
+        .order-detail{font-size:12px;color:var(--text-muted);margin-bottom:2px}
+        .order-detail span{color:var(--text);font-weight:500}
+        .order-price{font-size:18px;font-weight:800;color:var(--primary);margin-top:8px}
+        .order-actions{display:flex;gap:8px;margin-top:12px}
 
-        /* Stat cards */
-        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-        .stat-card{background:#fff;border-radius:12px;padding:18px 16px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);border-top:3px solid #1a5c3a}
-        .stat-card.accent{border-top-color:#ff9800}
-        .stat-card.success{border-top-color:#4caf50}
-        .stat-card.info{border-top-color:#2196f3}
-        .stat-card h3{font-size:24px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
-        .stat-card p{font-size:11px;color:#888;font-weight:500}
+        .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+        .stat-card{background:var(--card);border-radius:var(--radius);padding:20px 18px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--primary);border:1px solid var(--border);border-top-width:4px}
+        .stat-card.accent{border-top-color:#f59e0b}
+        .stat-card.success{border-top-color:#22c55e}
+        .stat-card.info{border-top-color:#3b82f6}
+        .stat-card h3{font-size:26px;font-weight:800;color:var(--text);margin-bottom:4px}
+        .stat-card p{font-size:12px;color:var(--text-muted);font-weight:500}
 
-        .chart-container{background:#fff;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-        .chart-container h3{font-size:13px;font-weight:600;margin-bottom:12px;color:#555}
+        .chart-container{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
+        .chart-container h3{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--text)}
         .chart-container canvas{max-height:250px}
 
-        /* Table for admin */
         .data-table{width:100%;border-collapse:collapse;font-size:13px}
-        .data-table th{text-align:left;padding:10px 12px;background:#f8f9fa;font-weight:600;color:#666;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
-        .data-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+        .data-table th{text-align:left;padding:12px 14px;background:var(--bg);font-weight:700;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid var(--border)}
+        .data-table td{padding:12px 14px;border-bottom:1px solid var(--border)}
         .data-table tr:last-child td{border-bottom:none}
-        .badge-active{color:#1a5c3a;font-weight:600;cursor:pointer}
-        .badge-inactive{color:#dc3545;font-weight:600;cursor:pointer}
+        .badge-active{color:var(--primary);font-weight:600;cursor:pointer}
+        .badge-inactive{color:#dc2626;font-weight:600;cursor:pointer}
 
-        /* Client cards */
-        .client-card{background:#fff;border-radius:10px;padding:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
-        .client-info h4{font-size:14px;font-weight:600;margin-bottom:2px}
-        .client-info p{font-size:12px;color:#888}
+        .client-card{background:var(--card);border-radius:var(--radius-sm);padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border)}
+        .client-info h4{font-size:15px;font-weight:700;margin-bottom:2px}
+        .client-info p{font-size:13px;color:var(--text-muted)}
         .client-stat{text-align:right}
-        .client-stat .count{font-size:18px;font-weight:700;color:#1a5c3a}
-        .client-stat .amount{font-size:12px;color:#888}
+        .client-stat .count{font-size:20px;font-weight:800;color:var(--primary)}
+        .client-stat .amount{font-size:12px;color:var(--text-muted)}
 
-        /* Modal */
-        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
         .modal-overlay.active{display:flex}
-        .modal-sheet{background:#fff;width:100%;max-width:700px;border-radius:20px 20px 0 0;padding:28px 20px 40px;max-height:90vh;overflow-y:auto}
-        .modal-sheet h3{font-size:17px;font-weight:700;margin-bottom:20px;text-align:center}
-        .modal-actions{display:flex;gap:10px;margin-top:20px}
-        .modal-actions button{flex:1;padding:14px;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
-        .btn-cancel{background:#f0f0f0;color:#333}
-        .btn-save{background:#1a5c3a;color:#fff}
-        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .modal-sheet{background:var(--card);width:100%;max-width:700px;border-radius:20px 20px 0 0;padding:32px 24px 48px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
+        .modal-sheet h3{font-size:20px;font-weight:800;margin-bottom:24px;text-align:center;color:var(--text)}
+        .modal-actions{display:flex;gap:12px;margin-top:24px}
+        .modal-actions button{flex:1;padding:16px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+        .btn-cancel{background:var(--bg);color:var(--text);border:2px solid var(--border)}
+        .btn-save{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff}
+        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
         @media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+        @media(min-width:600px){.modal-overlay{align-items:center}.modal-sheet{border-radius:20px}}
+        @media(max-width:480px){.nav-tabs button{padding:12px 16px;font-size:12px}.data-table{font-size:12px}.data-table th,.data-table td{padding:10px 8px}}
 
-        @media(min-width:600px){
-            .modal-overlay{align-items:center}
-            .modal-sheet{border-radius:20px}
+        .salary-table{width:100%;border-collapse:collapse;margin-top:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
+        .salary-table th{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff;padding:12px 14px;font-size:11px;text-transform:uppercase;text-align:left;font-weight:700}
+        .salary-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:13px}
+        .salary-amount{font-weight:800;color:var(--primary)}
+
+        /* Toast — ескертпелер (алерт орнына) */
+        .toast-wrap{position:fixed;bottom:max(24px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:calc(100% - 32px);width:320px}
+        .toast{pointer-events:auto;padding:14px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:10px;animation:toastIn .3s ease}
+        .toast-ok{background:var(--primary);color:#fff}
+        .toast-err{background:#dc2626;color:#fff}
+        .toast .toast-ico{width:20px;height:20px;flex-shrink:0}
+        @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* Телефонда тек карточкалар — кестелер жоқ */
+        .tables-desktop{display:block}
+        .cards-mobile{display:none}
+        .list-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+        .list-card-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+        .list-card-row:last-child{margin-bottom:0}
+        .list-card-label{font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase}
+        .list-card-value{font-size:14px;font-weight:600}
+        .list-card-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+        .list-card-actions .btn{min-height:44px}
+        .ico{width:18px;height:18px;flex-shrink:0;color:var(--primary);opacity:0.9}
+        .ico-sm{width:14px;height:14px}
+        .card h2 .ico{margin-right:2px}
+
+        /* ——— Толық адаптивті ——— */
+        .container{padding-left:16px;padding-right:16px}
+        .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -24px;padding:0 24px}
+        @media(max-width:768px){
+            .tables-desktop{display:none !important}
+            .cards-mobile{display:block !important}
+            .container{max-width:100%;padding:16px 12px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom)+60px)}
+            .top-bar{padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top))}
+            .top-bar .title{font-size:16px}
+            .nav-tabs{top:57px}
+            .nav-tabs button{padding:12px 14px;font-size:12px}
+            .card{padding:18px 16px;margin-bottom:14px}
+            .card h2{font-size:14px;margin-bottom:14px}
+            .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+            .stat-card{padding:16px 14px}
+            .stat-card h3{font-size:22px}
+            .stat-card p{font-size:11px}
+            .filters{gap:8px;margin-bottom:14px}
+            .filters select,.filters input{min-width:0;flex:1 1 120px;font-size:14px}
+            .inline-form{flex-direction:column;align-items:stretch}
+            .inline-form .field{min-width:0}
+            .form-grid{grid-template-columns:1fr}
+            .order-card{padding:14px}
+            .order-actions{flex-wrap:wrap;gap:6px}
+            .order-actions .btn{min-height:44px}
+            .client-card{flex-direction:column;align-items:flex-start;gap:10px}
+            .client-stat{text-align:left}
+            .table-wrap{margin:0 -16px;padding:0 16px}
+            .modal-sheet{padding:24px 20px 40px;padding-bottom:max(40px,env(safe-area-inset-bottom)+24px)}
+            .modal-actions button{min-height:48px}
+            .btn,.btn-sm{min-height:44px}
         }
         @media(max-width:480px){
-            .nav-tabs button{padding:12px 14px;font-size:11px}
-            .data-table{font-size:11px}
-            .data-table th,.data-table td{padding:8px 6px}
+            .container{padding:12px 10px 72px}
+            .top-bar .back-btn{width:44px;height:44px}
+            .logout-btn{padding:10px 12px;font-size:12px}
+            .stat-grid{grid-template-columns:1fr;gap:8px}
+            .stat-card h3{font-size:24px}
+            .chart-container{padding:16px}
+            .chart-container canvas{max-height:220px}
+            #targetKpi .stat-card h3{font-size:20px}
+            .queue-bar{padding:10px 12px}
+            .queue-bar .btn{font-size:11px;padding:6px 10px}
         }
-
-        /* Salary table */
-        .salary-table{width:100%;border-collapse:collapse;margin-top:12px}
-        .salary-table th{background:#1a5c3a;color:#fff;padding:10px 12px;font-size:11px;text-transform:uppercase;text-align:left}
-        .salary-table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
-        .salary-amount{font-weight:700;color:#1a5c3a}
+        @media(max-width:360px){
+            .card{padding:14px 12px}
+            .filters select,.filters input{flex:1 1 100%}
+        }
     </style>
 </head>
 <body>
+    <div class="toast-wrap" id="toastWrap"></div>
     <div class="top-bar">
         <div class="top-bar-left">
-            <a href="index.html" class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
-            <div class="title">Админ панель</div>
+            <a href="index.html" class="back-btn" aria-label="Артқа"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></a>
+            <div class="title"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="10" r="3"/><path d="M6 20c0-3 3-5 6-5s6 2 6 5"/></svg> Админ панель</div>
         </div>
-        <button class="logout-btn" onclick="logout()">Шығу</button>
+        <button class="logout-btn" onclick="logout()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Шығу</button>
     </div>
 
     <div class="nav-tabs">
-        <button class="active" onclick="showTab('orders')">Тапсырыстар</button>
-        <button onclick="showTab('stats')">Статистика</button>
-        <button onclick="showTab('clients')">Клиенттер</button>
-        <button onclick="showTab('settings')">Баптау</button>
+        <button class="active" onclick="showTab('orders')"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg> Тапсырыстар</button>
+        <button onclick="showTab('stats')"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Статистика</button>
+        <button onclick="showTab('clients')"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg> Клиенттер</button>
+        <button onclick="showTab('target')"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Таргет</button>
+        <button onclick="showTab('settings')"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Баптау</button>
     </div>
 
     <div class="container">
@@ -152,7 +218,7 @@
                 <select id="aFilterManager"><option value="">Барлық менеджерлер</option></select>
                 <input type="date" id="aFilterFrom">
                 <input type="date" id="aFilterTo">
-                <button class="btn btn-primary btn-sm" onclick="loadAdminOrders()">Фильтрлеу</button>
+                <button class="btn btn-primary btn-sm" onclick="loadAdminOrders()"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Фильтрлеу</button>
             </div>
             <div id="adminOrdersList"></div>
         </div>
@@ -176,10 +242,8 @@
             </div>
             <div class="card">
                 <h2>Менеджерлер айлығы — <span id="pctDisplay">10</span>%</h2>
-                <table class="salary-table">
-                    <thead><tr><th>Менеджер</th><th>Барлығы</th><th>Жеткізілген</th><th>Сату сомасы</th><th>Айлық</th></tr></thead>
-                    <tbody id="salaryTable"></tbody>
-                </table>
+                <div class="tables-desktop"><table class="salary-table"><thead><tr><th>Менеджер</th><th>Барлығы</th><th>Жеткізілген</th><th>Сату сомасы</th><th>Айлық</th></tr></thead><tbody id="salaryTable"></tbody></table></div>
+                <div class="cards-mobile" id="salaryCards"></div>
             </div>
         </div>
 
@@ -189,6 +253,49 @@
                 <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Клиенттер тізімі</h2>
             </div>
             <div id="clientsList"></div>
+        </div>
+
+        <!-- TARGET -->
+        <div class="tab-panel" id="tab-target">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center">
+                <button class="btn btn-outline btn-sm" onclick="copyTargetLink()"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Сілтемені көшіру</button>
+                <button class="btn btn-outline btn-sm" onclick="loadTargetData()"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Жаңарту</button>
+            </div>
+            <div class="stat-grid" id="targetKpi"></div>
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Таргетке менеджер қосу</h2>
+                <div class="inline-form">
+                    <div class="field"><label>Аты</label><input type="text" id="tMgrName" placeholder="Аты-жөні"></div>
+                    <div class="field"><label>Телефон</label><input type="tel" id="tMgrPhone" placeholder="+7 (___) ___-____" maxlength="18"></div>
+                    <div class="field"><label>WhatsApp хабарлама</label><input type="text" id="tMgrMsg" placeholder="Сәлем, сұрақ бар"></div>
+                    <button class="btn btn-primary" onclick="addTargetManager()">Қосу</button>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+                    <h2 style="margin:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Таргет кезегі</h2>
+                    <button class="btn btn-danger btn-sm" onclick="showTargetResetDlg()">Лидтерді нөлдеу</button>
+                </div>
+                <div class="queue-bar" id="targetQueueBar" style="display:none;padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:14px">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:8px">Кезек тәртібі (басып ауыстыру):</div>
+                    <div id="targetQueueChips" style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"></div>
+                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>#</th><th>Аты</th><th>Телефон</th><th>WhatsApp</th><th>Статус</th><th>Лид</th><th>Әрекет</th></tr></thead><tbody id="targetTeamTable"></tbody></table></div>
+                <div class="cards-mobile" id="targetTeamCards"></div>
+                <div class="blank" id="targetTeamBlank" style="display:none;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Таргетке менеджер қосылмаған.</div>
+            </div>
+            <div class="card">
+                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>Лидтер журналы</h2>
+                <div class="filters">
+                    <input type="date" id="targetLeadFrom">
+                    <input type="date" id="targetLeadTo">
+                    <select id="targetLeadMgr"><option value="">Барлық менеджерлер</option></select>
+                    <button class="btn btn-primary btn-sm" onclick="fetchTargetLeads()">Іздеу</button>
+                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>#</th><th>Менеджер</th><th>Уақыт</th><th>Referrer</th><th></th></tr></thead><tbody id="targetLeadsTable"></tbody></table></div>
+                <div class="cards-mobile" id="targetLeadsCards"></div>
+                <div class="blank" id="targetLeadsBlank" style="display:none;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Лидтер жоқ.</div>
+            </div>
         </div>
 
         <!-- SETTINGS -->
@@ -204,62 +311,46 @@
             </div>
 
             <div class="card">
-                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Менеджерлер</h2>
+                <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Менеджерлер</h2>
                 <div class="inline-form">
                     <div class="field"><label>Аты</label><input type="text" id="newMgrName" placeholder="Менеджер аты"></div>
                     <div class="field"><label>Телефон</label><input type="tel" id="newMgrPhone" placeholder="+7 (___) ___-____" inputmode="numeric" maxlength="18"></div>
                     <button class="btn btn-primary" onclick="addManager()">Қосу</button>
                 </div>
-                <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead><tr><th>ID</th><th>Аты</th><th>Телефон</th><th>Белсенді</th><th></th></tr></thead>
-                    <tbody id="mgrTable"></tbody>
-                </table>
-                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Аты</th><th>Телефон</th><th>Белсенді</th><th></th></tr></thead><tbody id="mgrTable"></tbody></table></div>
+                <div class="cards-mobile" id="mgrCards"></div>
             </div>
 
             <div class="card">
-                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Тауарлар</h2>
+                <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>Тауарлар</h2>
                 <div class="inline-form">
                     <div class="field"><label>Атауы</label><input type="text" id="newProdName" placeholder="Тауар атауы"></div>
                     <div class="field"><label>Бағасы</label><input type="text" id="newProdPrice" placeholder="0" inputmode="numeric"></div>
                     <button class="btn btn-primary" onclick="addProduct()">Қосу</button>
                 </div>
-                <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead><tr><th>ID</th><th>Атауы</th><th>Бағасы</th><th>Белсенді</th><th></th></tr></thead>
-                    <tbody id="prodTable"></tbody>
-                </table>
-                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Атауы</th><th>Бағасы</th><th>Белсенді</th><th></th></tr></thead><tbody id="prodTable"></tbody></table></div>
+                <div class="cards-mobile" id="prodCards"></div>
             </div>
 
             <div class="card">
-                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="2"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="20" cy="20" r="2"/></svg>Жеткізу түрлері</h2>
+                <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="2"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="20" cy="20" r="2"/></svg>Жеткізу түрлері</h2>
                 <div class="inline-form">
                     <div class="field"><label>Атауы</label><input type="text" id="newDtName" placeholder="Жеткізу түрі"></div>
                     <div class="field"><label>Қосымша өріс</label><input type="text" id="newDtExtra" placeholder="Мыс: Трек коды"></div>
                     <button class="btn btn-primary" onclick="addDeliveryType()">Қосу</button>
                 </div>
-                <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead><tr><th>ID</th><th>Атауы</th><th>Қосымша өріс</th><th>Белсенді</th></tr></thead>
-                    <tbody id="dtTable"></tbody>
-                </table>
-                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Атауы</th><th>Қосымша өріс</th><th>Белсенді</th></tr></thead><tbody id="dtTable"></tbody></table></div>
+                <div class="cards-mobile" id="dtCards"></div>
             </div>
 
             <div class="card">
-                <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Төлем түрлері</h2>
+                <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Төлем түрлері</h2>
                 <div class="inline-form">
                     <div class="field"><label>Атауы</label><input type="text" id="newPtName" placeholder="Төлем түрі"></div>
                     <button class="btn btn-primary" onclick="addPaymentType()">Қосу</button>
                 </div>
-                <div style="overflow-x:auto">
-                <table class="data-table">
-                    <thead><tr><th>ID</th><th>Атауы</th><th>Белсенді</th><th></th></tr></thead>
-                    <tbody id="ptTable"></tbody>
-                </table>
-                </div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Атауы</th><th>Белсенді</th><th></th></tr></thead><tbody id="ptTable"></tbody></table></div>
+                <div class="cards-mobile" id="ptCards"></div>
             </div>
         </div>
     </div>
@@ -291,11 +382,48 @@
         </div>
     </div>
 
+    <!-- Target: reset leads -->
+    <div class="modal-overlay" id="targetResetDlg">
+        <div class="modal-sheet" style="max-width:400px">
+            <h3>Лидтерді нөлдеу</h3>
+            <p style="color:var(--text-muted);font-size:14px;margin:16px 0 24px">Барлық таргет менеджерлердің лид саны 0-ге қайтарылады. Журнал сақталады.</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="hideTargetResetDlg()">Болдырмау</button>
+                <button class="btn btn-danger" onclick="execTargetReset()">Нөлдеу</button>
+            </div>
+        </div>
+    </div>
+    <!-- Target: edit manager -->
+    <div class="modal-overlay" id="targetEditDlg">
+        <div class="modal-sheet" style="max-width:440px">
+            <h3>Таргет менеджерін өзгерту</h3>
+            <input type="hidden" id="targetEditId">
+            <div class="field"><label>Аты</label><input type="text" id="targetEditName" placeholder="Аты-жөні"></div>
+            <div class="field"><label>Телефон</label><input type="tel" id="targetEditPhone" placeholder="+7 (___) ___-____" maxlength="18"></div>
+            <div class="field"><label>WhatsApp хабарлама</label><input type="text" id="targetEditMsg" placeholder="Сәлем"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="hideTargetEditDlg()">Бас тарту</button>
+                <button class="btn-save" onclick="commitTargetEdit()">Сақтау</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL='https://jnuokhhqojlurvadcduv.supabase.co';
         const SUPABASE_KEY='sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk';
         const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+        function showToast(msg,type){
+            type=type||'ok';
+            const wrap=document.getElementById('toastWrap');
+            const el=document.createElement('div');
+            el.className='toast toast-'+(type==='err'?'err':'ok');
+            const icon=type==='err'?'<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>':'<svg class="toast-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+            el.innerHTML=icon+'<span>'+String(msg).replace(/</g,'&lt;')+'</span>';
+            wrap.appendChild(el);
+            setTimeout(function(){el.style.animation='toastIn .25s ease reverse';setTimeout(function(){el.remove()},260)},2800);
+        }
 
         // Auth check
         if(localStorage.getItem('eskhat_admin_auth')!=='true'){window.location.href='index.html';}
@@ -316,6 +444,170 @@
             inp.addEventListener('input',function(){this.value=this.value.replace(/[^\d]/g,'')});
         });
 
+        // ——— Таргет ———
+        let targetRoster=[], targetTurnPtr=0;
+        function phoneDisplayTarget(raw){
+            if(!raw)return'';
+            const c=String(raw).replace(/\D/g,'');
+            if(c.length===11)return'+'+c[0]+' ('+c.slice(1,4)+') '+c.slice(4,7)+'-'+c.slice(7,9)+'-'+c.slice(9,11);
+            return raw;
+        }
+        async function loadTargetData(){
+            const {data:mgrs,error:mE}=await sb.from('eseke-target-managers').select('*').order('created_at',{ascending:true});
+            if(mE){return;}
+            targetRoster=mgrs||[];
+            const {data:cfg}=await sb.from('eseke-target-settings').select('current_index').eq('id',1).single();
+            targetTurnPtr=cfg?.current_index??0;
+            paintTargetKPI();
+            paintTargetTeam();
+            paintTargetQueue();
+            refreshTargetSieve();
+            fetchTargetLeads();
+        }
+        function paintTargetKPI(){
+            const el=document.getElementById('targetKpi');
+            if(!el)return;
+            const active=targetRoster.filter(m=>m.is_active).length;
+            const totalLeads=targetRoster.reduce((s,m)=>s+(m.total_leads||0),0);
+            const today=new Date().toISOString().split('T')[0];
+            sb.from('eseke-target-leads').select('*',{count:'exact',head:true}).gte('created_at',today+'T00:00:00').then(({count})=>{
+                el.innerHTML=`
+                    <div class="stat-card"><h3>${targetRoster.length}</h3><p>Менеджерлер</p></div>
+                    <div class="stat-card success"><h3>${active}</h3><p>Белсенді</p></div>
+                    <div class="stat-card" style="border-top-color:var(--primary)"><h3>${totalLeads}</h3><p>Барлық лид</p></div>
+                    <div class="stat-card info"><h3>${count??0}</h3><p>Бүгін</p></div>
+                `;
+            });
+        }
+        function paintTargetTeam(){
+            const tbl=document.getElementById('targetTeamTable'), cards=document.getElementById('targetTeamCards'), blank=document.getElementById('targetTeamBlank');
+            if(!tbl)return;
+            if(!targetRoster.length){tbl.innerHTML='';if(cards)cards.innerHTML='';if(blank)blank.style.display='block';return;}
+            if(blank)blank.style.display='none';
+            const live=targetRoster.filter(m=>m.is_active);
+            tbl.innerHTML=targetRoster.map((m,i)=>{
+                const onDuty=m.is_active&&live.findIndex(x=>x.id===m.id)===targetTurnPtr;
+                const toggle=m.is_active ?`<button class="btn btn-outline btn-sm" onclick="flipTargetMgr(${m.id},false)">Тоқтату</button>`:`<button class="btn btn-primary btn-sm" onclick="flipTargetMgr(${m.id},true)">Қосу</button>`;
+                return `<tr><td style="color:var(--text-muted);font-weight:600">${i+1}</td><td><strong>${escapeHtml(m.name)}</strong>${onDuty?' <span style="background:var(--primary-soft);color:var(--primary);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Кезекте</span>':''}</td><td style="color:var(--primary);font-size:12px;font-weight:600">${phoneDisplayTarget(m.phone)}</td><td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;color:var(--text-muted)">${escapeHtml(m.whatsapp_link||'')}</td><td><span class="${m.is_active?'badge-active':'badge-inactive'}">${m.is_active?'Белсенді':'Тоқтатылған'}</span></td><td style="font-size:18px;font-weight:800;color:var(--primary)">${m.total_leads||0}</td><td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="openTargetEditDlg(${i})">Өзгерту</button>${toggle}<button class="btn btn-danger btn-sm" onclick="removeTargetMgr(${m.id},'${escapeHtml(m.name).replace(/'/g,"\\'")}')">Өшіру</button></div></td></tr>`;
+            }).join('');
+            if(cards) cards.innerHTML=targetRoster.map((m,i)=>{
+                const onDuty=m.is_active&&live.findIndex(x=>x.id===m.id)===targetTurnPtr;
+                const toggle=m.is_active ?`<button class="btn btn-outline btn-sm" onclick="flipTargetMgr(${m.id},false)">Тоқтату</button>`:`<button class="btn btn-primary btn-sm" onclick="flipTargetMgr(${m.id},true)">Қосу</button>`;
+                return `<div class="list-card"><div class="list-card-row"><span class="list-card-label">Аты</span><span class="list-card-value">${escapeHtml(m.name)}${onDuty?' <span style="background:var(--primary-soft);color:var(--primary);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Кезекте</span>':''}</span></div><div class="list-card-row"><span class="list-card-label">Телефон</span><span style="color:var(--primary);font-weight:600">${phoneDisplayTarget(m.phone)}</span></div><div class="list-card-row"><span class="list-card-label">Лид</span><span style="font-size:18px;font-weight:800;color:var(--primary)">${m.total_leads||0}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${m.is_active?'badge-active':'badge-inactive'}">${m.is_active?'Белсенді':'Тоқтатылған'}</span></div><div class="list-card-actions">${toggle}<button class="btn btn-outline btn-sm" onclick="openTargetEditDlg(${i})">Өзгерту</button><button class="btn btn-danger btn-sm" onclick="removeTargetMgr(${m.id},'${escapeHtml(m.name).replace(/'/g,"\\'")}')">Өшіру</button></div></div>`;
+            }).join('');
+        }
+        function escapeHtml(s){if(!s)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
+        function paintTargetQueue(){
+            const bar=document.getElementById('targetQueueBar'), chips=document.getElementById('targetQueueChips');
+            if(!bar||!chips)return;
+            const live=targetRoster.filter(m=>m.is_active);
+            if(!live.length){bar.style.display='none';return;}
+            bar.style.display='block';
+            chips.innerHTML=live.map((m,i)=>`<button type="button" class="btn ${i===targetTurnPtr?'btn-primary':'btn-outline'} btn-sm" onclick="jumpTargetQueue(${i})">${i+1}. ${escapeHtml(m.name)}</button>${i<live.length-1?' <span style="color:var(--text-muted)">→</span> ':''}`).join('');
+        }
+        function refreshTargetSieve(){
+            const sel=document.getElementById('targetLeadMgr');
+            if(!sel)return;
+            sel.innerHTML='<option value="">Барлық менеджерлер</option>';
+            targetRoster.forEach(m=>sel.innerHTML+=`<option value="${escapeHtml(m.name)}">${escapeHtml(m.name)}</option>`);
+        }
+        async function fetchTargetLeads(){
+            let q=sb.from('eseke-target-leads').select('*').order('created_at',{ascending:false}).limit(300);
+            const from=document.getElementById('targetLeadFrom')?.value, to=document.getElementById('targetLeadTo')?.value, who=document.getElementById('targetLeadMgr')?.value;
+            if(from)q=q.gte('created_at',from+'T00:00:00');
+            if(to)q=q.lte('created_at',to+'T23:59:59');
+            if(who)q=q.eq('manager_name',who);
+            const {data:rows}=await q;
+            const tbl=document.getElementById('targetLeadsTable'), cards=document.getElementById('targetLeadsCards'), blank=document.getElementById('targetLeadsBlank');
+            if(!tbl)return;
+            if(!rows||!rows.length){tbl.innerHTML='';if(cards)cards.innerHTML='';if(blank)blank.style.display='block';return;}
+            if(blank)blank.style.display='none';
+            tbl.innerHTML=rows.map((r,i)=>{
+                const d=new Date(r.created_at);
+                const ts=d.toLocaleDateString('kk-KZ')+' '+d.toLocaleTimeString('kk-KZ',{hour:'2-digit',minute:'2-digit'});
+                return `<tr><td style="color:var(--text-muted)">${i+1}</td><td><strong>${escapeHtml(r.manager_name||'—')}</strong></td><td style="white-space:nowrap">${ts}</td><td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-muted)">${escapeHtml(r.referrer||'—')}</td><td><button class="btn btn-danger btn-sm" onclick="purgeTargetLead('${r.id}','${escapeHtml(r.manager_name||'').replace(/'/g,"\\'")}')">Өшіру</button></td></tr>`;
+            }).join('');
+            if(cards) cards.innerHTML=rows.map((r,i)=>{
+                const d=new Date(r.created_at);
+                const ts=d.toLocaleDateString('kk-KZ')+' '+d.toLocaleTimeString('kk-KZ',{hour:'2-digit',minute:'2-digit'});
+                return `<div class="list-card"><div class="list-card-row"><span class="list-card-label">Менеджер</span><span class="list-card-value">${escapeHtml(r.manager_name||'—')}</span></div><div class="list-card-row"><span class="list-card-label">Уақыт</span><span>${ts}</span></div><div class="list-card-row"><span class="list-card-label">Referrer</span><span style="font-size:12px;color:var(--text-muted)">${escapeHtml(r.referrer||'—')}</span></div><div class="list-card-actions"><button class="btn btn-danger btn-sm" onclick="purgeTargetLead('${r.id}','${escapeHtml(r.manager_name||'').replace(/'/g,"\\'")}')">Өшіру</button></div></div>`;
+            }).join('');
+        }
+        async function addTargetManager(){
+            const name=document.getElementById('tMgrName').value.trim(), phone=document.getElementById('tMgrPhone').value.trim(), msg=document.getElementById('tMgrMsg').value.trim();
+            if(!name){showToast('Атын енгізіңіз','err');return;}
+            const clean=phone.replace(/\D/g,'');
+            if(clean.length<11){showToast('Телефон толық емес','err');return;}
+            const wa='https://wa.me/'+clean+(msg?'?text='+encodeURIComponent(msg):'');
+            const {error}=await sb.from('eseke-target-managers').insert([{name,phone:clean,whatsapp_link:wa,is_active:true,total_leads:0}]);
+            if(error){showToast('Қате: '+error.message,'err');return;}
+            document.getElementById('tMgrName').value='';document.getElementById('tMgrPhone').value='';document.getElementById('tMgrMsg').value='';
+            loadTargetData();
+        }
+        async function flipTargetMgr(id,val){
+            const {error}=await sb.from('eseke-target-managers').update({is_active:val}).eq('id',id);
+            if(error){showToast('Қате: '+error.message,'err');return;}
+            await sb.from('eseke-target-settings').update({current_index:0}).eq('id',1);
+            loadTargetData();
+        }
+        async function removeTargetMgr(id,name){
+            if(!confirm(name+' жойылсын ба?'))return;
+            const {error}=await sb.from('eseke-target-managers').delete().eq('id',id);
+            if(error){showToast('Қате: '+error.message,'err');return;}
+            await sb.from('eseke-target-settings').update({current_index:0}).eq('id',1);
+            loadTargetData();
+        }
+        function showTargetResetDlg(){document.getElementById('targetResetDlg').classList.add('active');}
+        function hideTargetResetDlg(){document.getElementById('targetResetDlg').classList.remove('active');}
+        async function execTargetReset(){
+            for(const m of targetRoster){await sb.from('eseke-target-managers').update({total_leads:0}).eq('id',m.id);}
+            hideTargetResetDlg();
+            loadTargetData();
+        }
+        async function jumpTargetQueue(idx){
+            const live=targetRoster.filter(m=>m.is_active);
+            if(idx<0||idx>=live.length)return;
+            await sb.from('eseke-target-settings').update({current_index:idx}).eq('id',1);
+            targetTurnPtr=idx;
+            paintTargetTeam();
+            paintTargetQueue();
+        }
+        function openTargetEditDlg(i){
+            const m=targetRoster[i];if(!m)return;
+            document.getElementById('targetEditId').value=m.id;
+            document.getElementById('targetEditName').value=m.name||'';
+            document.getElementById('targetEditPhone').value=phoneDisplayTarget(m.phone||'');
+            const wa=m.whatsapp_link||'';
+            const ti=wa.indexOf('?text=');
+            document.getElementById('targetEditMsg').value=ti>-1?decodeURIComponent(wa.slice(ti+6)):'';
+            document.getElementById('targetEditDlg').classList.add('active');
+        }
+        function hideTargetEditDlg(){document.getElementById('targetEditDlg').classList.remove('active');}
+        document.getElementById('targetEditDlg')?.addEventListener('click',function(e){if(e.target===this)hideTargetEditDlg();});
+        document.getElementById('targetResetDlg')?.addEventListener('click',function(e){if(e.target===this)hideTargetResetDlg();});
+        async function commitTargetEdit(){
+            const id=document.getElementById('targetEditId').value, name=document.getElementById('targetEditName').value.trim(), phone=document.getElementById('targetEditPhone').value.trim(), msg=document.getElementById('targetEditMsg').value.trim();
+            if(!name){showToast('Атын енгізіңіз','err');return;}
+            const clean=phone.replace(/\D/g,'');
+            if(clean.length<11){showToast('Телефон толық емес','err');return;}
+            const wa='https://wa.me/'+clean+(msg?'?text='+encodeURIComponent(msg):'');
+            const {error}=await sb.from('eseke-target-managers').update({name,phone:clean,whatsapp_link:wa}).eq('id',id);
+            if(error){showToast('Қате: '+error.message,'err');return;}
+            hideTargetEditDlg();
+            loadTargetData();
+        }
+        async function purgeTargetLead(id,who){
+            if(!confirm(who?'Бұл лидті жою?':"Лидті жою?"))return;
+            await sb.from('eseke-target-leads').delete().eq('id',id);
+            fetchTargetLeads();
+        }
+        function copyTargetLink(){
+            const url='https://jet-republic.vercel.app/target.html';
+            if(navigator.clipboard?.writeText){navigator.clipboard.writeText(url).then(()=>showToast('Сілтеме көшірілді')).catch(()=>showToast(url,'err'));}
+            else{showToast(url,'err');}
+        }
+
+        
         // Tabs
         function showTab(tab){
             document.querySelectorAll('.nav-tabs button').forEach(b=>b.classList.remove('active'));
@@ -326,6 +618,7 @@
             if(tab==='settings')loadSettingsData();
             if(tab==='clients')loadClients();
             if(tab==='orders')loadAdminOrders();
+            if(tab==='target')loadTargetData();
         }
 
         // DATA LOADING
@@ -456,7 +749,7 @@
                 notes:document.getElementById('eNotes').value
             };
             const{error}=await sb.from('eseke-orders').update(update).eq('id',id);
-            if(error){alert('Қате: '+error.message);return}
+            if(error){showToast('Қате: '+error.message,'err');return}
             closeEditModal();
             loadAdminOrders();
         }
@@ -541,15 +834,9 @@
                     }
                 }
             });
-            document.getElementById('salaryTable').innerHTML=Object.values(mgrStats).map(m=>`
-                <tr>
-                    <td>${m.name}</td>
-                    <td>${m.total}</td>
-                    <td>${m.delivered}</td>
-                    <td>${m.sales.toLocaleString()} ₸</td>
-                    <td class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</td>
-                </tr>
-            `).join('');
+            const salaryRows=Object.values(mgrStats);
+            document.getElementById('salaryTable').innerHTML=salaryRows.map(m=>`<tr><td>${m.name}</td><td>${m.total}</td><td>${m.delivered}</td><td>${m.sales.toLocaleString()} ₸</td><td class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</td></tr>`).join('');
+            document.getElementById('salaryCards').innerHTML=salaryRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Менеджер</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Барлығы</span><span>${m.total}</span></div><div class="list-card-row"><span class="list-card-label">Жеткізілген</span><span>${m.delivered}</span></div><div class="list-card-row"><span class="list-card-label">Сату</span><span>${m.sales.toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">Айлық</span><span class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</span></div></div>`).join('');
         }
 
         // CLIENTS
@@ -579,44 +866,29 @@
             document.getElementById('sPercentage').value=s.default_percentage||10;
             document.getElementById('sAdminPassword').value=s.admin_password||'123456';
 
-            // Managers table
+            // Managers table + cards (mobile)
             const{data:mgrs}=await sb.from('eseke-managers').select('*').order('name');
-            document.getElementById('mgrTable').innerHTML=(mgrs||[]).map(m=>`
-                <tr>
-                    <td>${m.id}</td><td>${m.name}</td><td>${m.phone||'-'}</td>
-                    <td><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></td>
-                </tr>
-            `).join('');
+            const mgrRows=mgrs||[];
+            document.getElementById('mgrTable').innerHTML=mgrRows.map(m=>`<tr><td>${m.id}</td><td>${m.name}</td><td>${m.phone||'-'}</td><td><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></td></tr>`).join('');
+            document.getElementById('mgrCards').innerHTML=mgrRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Аты</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Телефон</span><span class="list-card-value">${m.phone||'-'}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></div><div class="list-card-actions"><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></div></div>`).join('');
 
-            // Products table
+            // Products table + cards
             const{data:prods}=await sb.from('eseke-products').select('*').order('name');
-            document.getElementById('prodTable').innerHTML=(prods||[]).map(p=>`
-                <tr>
-                    <td>${p.id}</td><td>${p.name}</td><td>${Number(p.price||0).toLocaleString()} ₸</td>
-                    <td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="toggleProduct(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Өшіру</button></td>
-                </tr>
-            `).join('');
+            const prodRows=prods||[];
+            document.getElementById('prodTable').innerHTML=prodRows.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td>${Number(p.price||0).toLocaleString()} ₸</td><td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="toggleProduct(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Өшіру</button></td></tr>`).join('');
+            document.getElementById('prodCards').innerHTML=prodRows.map(p=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Атауы</span><span class="list-card-value">${p.name}</span></div><div class="list-card-row"><span class="list-card-label">Бағасы</span><span class="list-card-value" style="color:var(--primary)">${Number(p.price||0).toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${p.active?'badge-active':'badge-inactive'}" onclick="toggleProduct(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></div><div class="list-card-actions"><button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Өшіру</button></div></div>`).join('');
 
-            // Delivery types
+            // Delivery types table + cards
             const{data:dts}=await sb.from('eseke-delivery-types').select('*').order('name');
-            document.getElementById('dtTable').innerHTML=(dts||[]).map(d=>`
-                <tr>
-                    <td>${d.id}</td><td>${d.name}</td><td>${d.extra_field_name||'-'}</td>
-                    <td><span class="${d.active?'badge-active':'badge-inactive'}" onclick="toggleDeliveryType(${d.id},${d.active})">${d.active?'Белсенді':'Өшірулі'}</span></td>
-                </tr>
-            `).join('');
+            const dtRows=dts||[];
+            document.getElementById('dtTable').innerHTML=dtRows.map(d=>`<tr><td>${d.id}</td><td>${d.name}</td><td>${d.extra_field_name||'-'}</td><td><span class="${d.active?'badge-active':'badge-inactive'}" onclick="toggleDeliveryType(${d.id},${d.active})">${d.active?'Белсенді':'Өшірулі'}</span></td></tr>`).join('');
+            document.getElementById('dtCards').innerHTML=dtRows.map(d=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Атауы</span><span class="list-card-value">${d.name}</span></div><div class="list-card-row"><span class="list-card-label">Қосымша өріс</span><span class="list-card-value">${d.extra_field_name||'-'}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${d.active?'badge-active':'badge-inactive'}" onclick="toggleDeliveryType(${d.id},${d.active})">${d.active?'Белсенді':'Өшірулі'}</span></div></div>`).join('');
 
-            // Payment types
+            // Payment types table + cards
             const{data:pts}=await sb.from('eseke-payment-types').select('*').order('name');
-            document.getElementById('ptTable').innerHTML=(pts||[]).map(p=>`
-                <tr>
-                    <td>${p.id}</td><td>${p.name}</td>
-                    <td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="togglePaymentType(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td>
-                    <td><button class="btn btn-danger btn-sm" onclick="deletePaymentType(${p.id})">Өшіру</button></td>
-                </tr>
-            `).join('');
+            const ptRows=pts||[];
+            document.getElementById('ptTable').innerHTML=ptRows.map(p=>`<tr><td>${p.id}</td><td>${p.name}</td><td><span class="${p.active?'badge-active':'badge-inactive'}" onclick="togglePaymentType(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></td><td><button class="btn btn-danger btn-sm" onclick="deletePaymentType(${p.id})">Өшіру</button></td></tr>`).join('');
+            document.getElementById('ptCards').innerHTML=ptRows.map(p=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Атауы</span><span class="list-card-value">${p.name}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${p.active?'badge-active':'badge-inactive'}" onclick="togglePaymentType(${p.id},${p.active})">${p.active?'Белсенді':'Өшірулі'}</span></div><div class="list-card-actions"><button class="btn btn-danger btn-sm" onclick="deletePaymentType(${p.id})">Өшіру</button></div></div>`).join('');
         }
 
         async function saveSettings(){
@@ -628,16 +900,17 @@
             for(const item of items){
                 await sb.from('eseke-settings').upsert(item,{onConflict:'setting_key'});
             }
-            alert('Сақталды!');
+            showToast('Баптаулар сақталды');
         }
 
         // CRUD functions
         async function addManager(){
             const name=document.getElementById('newMgrName').value.trim();
             const phone=document.getElementById('newMgrPhone').value.trim();
-            if(!name)return alert('Атын енгізіңіз');
+            if(!name){showToast('Атын енгізіңіз','err');return;}
             await sb.from('eseke-managers').insert([{name,phone,active:true}]);
             document.getElementById('newMgrName').value='';document.getElementById('newMgrPhone').value='';
+            showToast('Менеджер қосылды');
             loadSettingsData();loadAllData();
         }
         async function toggleManager(id,cur){await sb.from('eseke-managers').update({active:!cur}).eq('id',id);loadSettingsData()}
@@ -646,9 +919,10 @@
         async function addProduct(){
             const name=document.getElementById('newProdName').value.trim();
             const price=parseInt(document.getElementById('newProdPrice').value)||0;
-            if(!name)return alert('Атауын енгізіңіз');
+            if(!name){showToast('Атауын енгізіңіз','err');return;}
             await sb.from('eseke-products').insert([{name,price,active:true}]);
             document.getElementById('newProdName').value='';document.getElementById('newProdPrice').value='';
+            showToast('Тауар қосылды');
             loadSettingsData();loadAllData();
         }
         async function toggleProduct(id,cur){await sb.from('eseke-products').update({active:!cur}).eq('id',id);loadSettingsData()}
@@ -657,7 +931,7 @@
         async function addDeliveryType(){
             const name=document.getElementById('newDtName').value.trim();
             const extra=document.getElementById('newDtExtra').value.trim();
-            if(!name)return alert('Атауын енгізіңіз');
+            if(!name){showToast('Атауын енгізіңіз','err');return;}
             await sb.from('eseke-delivery-types').insert([{name,extra_field_name:extra||null,active:true}]);
             document.getElementById('newDtName').value='';document.getElementById('newDtExtra').value='';
             loadSettingsData();loadAllData();
@@ -666,7 +940,7 @@
 
         async function addPaymentType(){
             const name=document.getElementById('newPtName').value.trim();
-            if(!name)return alert('Атауын енгізіңіз');
+            if(!name){showToast('Атауын енгізіңіз','err');return;}
             await sb.from('eseke-payment-types').insert([{name,active:true}]);
             document.getElementById('newPtName').value='';
             loadSettingsData();loadAllData();
