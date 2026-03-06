@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JET Republic</title>
+    <style>*{margin:0;padding:0}body{background:#f0f4f2}</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async function(){
+  const sb = window.supabase.createClient(
+    'https://jnuokhhqojlurvadcduv.supabase.co',
+    'sb_publishable_3l9NjY0Qadv3dJ9x3-t19w_8mKniZBk'
+  );
+  const fallback = 'https://wa.me/7';
+  try {
+    const [{ data: mgrs, error: mE }, { data: settings, error: sE }] = await Promise.all([
+      sb.from('eseke-target-managers').select('*').eq('is_active', true).order('created_at', { ascending: true }),
+      sb.from('eseke-target-settings').select('*').eq('id', 1).single()
+    ]);
+    if (mE || sE || !mgrs || !mgrs.length) {
+      window.location.href = fallback;
+      return;
+    }
+    let idx = (settings && settings.current_index) || 0;
+    if (idx >= mgrs.length) idx = 0;
+    const mgr = mgrs[idx];
+    const next = (idx + 1) % mgrs.length;
+    await Promise.all([
+      sb.from('eseke-target-settings').update({ current_index: next, updated_at: new Date().toISOString() }).eq('id', 1),
+      sb.from('eseke-target-managers').update({ total_leads: (mgr.total_leads || 0) + 1 }).eq('id', mgr.id),
+      sb.from('eseke-target-leads').insert({ manager_id: mgr.id, manager_name: mgr.name, user_agent: navigator.userAgent || '', referrer: document.referrer || '' })
+    ]);
+    window.location.href = mgr.whatsapp_link;
+  } catch (e) {
+    window.location.href = fallback;
+  }
+})();
+</script>
+</body>
+</html>
