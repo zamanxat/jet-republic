@@ -7,32 +7,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root{--bg:#f0f4f2;--card:#fff;--primary:#0d4d2b;--primary-light:#166534;--primary-soft:#dcfce7;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--radius:16px;--radius-sm:12px;--shadow:0 1px 3px rgba(0,0,0,0.06)}
+        :root{--bg:#f0f4f2;--card:#fff;--primary:#0d4d2b;--primary-light:#166534;--primary-soft:#dcfce7;--text:#0f172a;--text-muted:#64748b;--border:#e2e8f0;--radius:18px;--radius-sm:14px;--shadow:0 2px 8px rgba(0,0,0,0.06)}
         *{margin:0;padding:0;box-sizing:border-box}
         html{-webkit-text-size-adjust:100%}
-        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
-        .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;padding:0 env(safe-area-inset-right) max(24px,env(safe-area-inset-bottom)) env(safe-area-inset-left)}
+        .top-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;padding-top:max(14px,env(safe-area-inset-top));background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:var(--shadow)}
         .top-bar-left{display:flex;align-items:center;gap:12px}
-        .top-bar .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:none;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;text-decoration:none;transition:background .2s}
+        .top-bar .back-btn{width:44px;height:44px;min-width:44px;display:flex;align-items:center;justify-content:center;border:none;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;text-decoration:none;transition:background .2s}
         .top-bar .back-btn:hover{background:var(--border)}
-        .top-bar .back-btn svg{width:20px;height:20px;color:var(--text)}
-        .top-bar .title{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:8px}
-        .logout-btn{padding:10px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;color:#b91c1c;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+        .top-bar .back-btn svg{width:22px;height:22px;color:var(--text)}
+        .top-bar .title{font-size:clamp(16px,4vw,18px);font-weight:800;color:var(--text);letter-spacing:-0.02em;display:inline-flex;align-items:center;gap:8px}
+        .logout-btn{padding:10px 16px;min-height:44px;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;color:#b91c1c;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
         .logout-btn:hover{background:#fee2e2;color:#991b1b}
 
-        .nav-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;position:sticky;top:73px;z-index:99;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .nav-tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;overflow-y:hidden;position:sticky;top:72px;z-index:99;-webkit-overflow-scrolling:touch;scrollbar-width:none}
         .nav-tabs::-webkit-scrollbar{display:none}
-        .nav-tabs button{padding:14px 16px;min-height:48px;min-width:44px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;display:inline-flex;align-items:center;gap:6px}
+        .nav-tabs button{padding:14px 16px;min-height:52px;min-width:48px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;color:var(--text-muted);white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;display:inline-flex;align-items:center;gap:8px}
         .nav-tabs button.active{color:var(--primary);border-bottom-color:var(--primary)}
         .nav-tabs button .ico{opacity:0.8}
         .nav-tabs button.active .ico{color:var(--primary)}
 
-        .container{max-width:960px;margin:0 auto;padding:24px 20px 80px}
+        .container{max-width:960px;margin:0 auto;padding:20px 16px;padding-bottom:max(80px,env(safe-area-inset-bottom)+60px)}
         .tab-panel{display:none}
         .tab-panel.active{display:block}
 
-        .card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border)}
-        .card h2{font-size:16px;font-weight:700;margin-bottom:18px;color:var(--text);padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+        .card{background:var(--card);border-radius:var(--radius);padding:22px;margin-bottom:18px;box-shadow:var(--shadow);border:1px solid var(--border)}
+        .card h2{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--text);padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
         .card h2 svg{width:20px;height:20px;color:var(--primary);opacity:0.8}
 
         .field{margin-bottom:16px}
@@ -40,21 +40,22 @@
         .field input,.field select,.field textarea{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:inherit;outline:none;background:var(--card);transition:border-color .2s}
         .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
 
-        .btn{padding:10px 18px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
-        .btn-primary{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff}
-        .btn-primary:hover{opacity:.95}
+        .btn{padding:12px 20px;min-height:44px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+        .btn-primary{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff;box-shadow:0 2px 8px rgba(13,77,43,0.2)}
+        .btn-primary:hover{opacity:.96}
         .btn-danger{background:#dc2626;color:#fff}
         .btn-danger:hover{background:#b91c1c}
         .btn-outline{background:var(--bg);color:var(--text);border:2px solid var(--border)}
-        .btn-outline:hover{background:var(--border)}
-        .btn-sm{padding:8px 14px;font-size:12px}
+        .btn-outline:hover{background:var(--border);border-color:var(--primary);color:var(--primary)}
+        .btn-sm{padding:10px 16px;min-height:40px;font-size:12px}
 
         .inline-form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
         .inline-form .field{margin-bottom:0;flex:1;min-width:140px}
 
-        .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
-        .filters select,.filters input{padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--card);outline:none}
+        .filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center;padding:16px;background:var(--card);border-radius:var(--radius-sm);border:1px solid var(--border)}
+        .filters select,.filters input{padding:10px 14px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;background:var(--card);outline:none;min-height:44px}
         .filters select:focus,.filters input:focus{border-color:var(--primary)}
+        @media(max-width:768px){.filters{padding:12px;gap:8px}.filters select,.filters input{flex:1 1 100%;min-width:0}}
 
         .order-card{background:var(--card);border-radius:var(--radius-sm);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--border);border:1px solid var(--border);border-left-width:4px}
         .order-card.status-new{border-left-color:#2196f3}
@@ -74,7 +75,10 @@
         .order-detail{font-size:12px;color:var(--text-muted);margin-bottom:2px}
         .order-detail span{color:var(--text);font-weight:500}
         .order-price{font-size:18px;font-weight:800;color:var(--primary);margin-top:8px}
-        .order-actions{display:flex;gap:8px;margin-top:12px}
+        .order-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+        .order-actions .btn{min-height:44px}
+        .order-empty,.order-empty-err{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:14px}
+        .order-empty-err{color:#dc2626}
 
         .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
         .stat-card{background:var(--card);border-radius:var(--radius);padding:20px 18px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--primary);border:1px solid var(--border);border-top-width:4px}
@@ -102,18 +106,20 @@
         .client-stat .count{font-size:20px;font-weight:800;color:var(--primary)}
         .client-stat .amount{font-size:12px;color:var(--text-muted)}
 
-        .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.5);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:1000;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px)}
         .modal-overlay.active{display:flex}
-        .modal-sheet{background:var(--card);width:100%;max-width:700px;border-radius:20px 20px 0 0;padding:32px 24px 48px;max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
+        .modal-sheet{background:var(--card);width:100%;max-width:700px;border-radius:var(--radius) var(--radius) 0 0;padding:28px 20px;padding-bottom:max(40px,env(safe-area-inset-bottom)+24px);max-height:90vh;overflow-y:auto;border:1px solid var(--border)}
         .modal-sheet h3{font-size:20px;font-weight:800;margin-bottom:24px;text-align:center;color:var(--text)}
         .modal-actions{display:flex;gap:12px;margin-top:24px}
-        .modal-actions button{flex:1;padding:16px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+        .modal-actions button{flex:1;padding:16px;min-height:52px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
         .btn-cancel{background:var(--bg);color:var(--text);border:2px solid var(--border)}
+        .btn-cancel:hover{background:var(--border)}
         .btn-save{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff}
+        .btn-save:hover{opacity:.96}
         .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
         @media(max-width:500px){.form-grid{grid-template-columns:1fr}}
-        @media(min-width:600px){.modal-overlay{align-items:center}.modal-sheet{border-radius:20px}}
-        @media(max-width:480px){.nav-tabs button{padding:12px 16px;font-size:12px}.data-table{font-size:12px}.data-table th,.data-table td{padding:10px 8px}}
+        @media(min-width:600px){.modal-overlay{align-items:center;padding:20px}.modal-sheet{border-radius:var(--radius)}}
+        @media(max-width:480px){.nav-tabs button{padding:12px 16px;font-size:12px}.data-table{font-size:12px}.data-table th,.data-table td{padding:10px 8px}.order-card{padding:14px}.order-actions{flex-wrap:wrap}.order-actions .btn{min-width:120px}}
 
         .salary-table{width:100%;border-collapse:collapse;margin-top:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border)}
         .salary-table th{background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff;padding:12px 14px;font-size:11px;text-transform:uppercase;text-align:left;font-weight:700}
@@ -148,11 +154,10 @@
         @media(max-width:768px){
             .tables-desktop{display:none !important}
             .cards-mobile{display:block !important}
-            .container{max-width:100%;padding:16px 12px 80px;padding-bottom:max(80px,env(safe-area-inset-bottom)+60px)}
+            .container{max-width:100%;padding:16px 14px;padding-bottom:max(72px,env(safe-area-inset-bottom)+56px)}
             .top-bar{padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top))}
-            .top-bar .title{font-size:16px}
-            .nav-tabs{top:57px}
-            .nav-tabs button{padding:12px 14px;font-size:12px}
+            .nav-tabs{top:60px}
+            .nav-tabs button{padding:12px 14px;min-height:48px;font-size:12px}
             .card{padding:18px 16px;margin-bottom:14px}
             .card h2{font-size:14px;margin-bottom:14px}
             .stat-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
@@ -160,17 +165,18 @@
             .stat-card h3{font-size:22px}
             .stat-card p{font-size:11px}
             .filters{gap:8px;margin-bottom:14px}
-            .filters select,.filters input{min-width:0;flex:1 1 120px;font-size:14px}
+            .filters select,.filters input{min-width:0;flex:1 1 120px;font-size:14px;min-height:44px}
             .inline-form{flex-direction:column;align-items:stretch}
             .inline-form .field{min-width:0}
             .form-grid{grid-template-columns:1fr}
             .order-card{padding:14px}
-            .order-actions{flex-wrap:wrap;gap:6px}
+            .order-actions{flex-wrap:wrap;gap:8px}
             .order-actions .btn{min-height:44px}
             .client-card{flex-direction:column;align-items:flex-start;gap:10px}
             .client-stat{text-align:left}
             .table-wrap{margin:0 -16px;padding:0 16px}
-            .modal-sheet{padding:24px 20px 40px;padding-bottom:max(40px,env(safe-area-inset-bottom)+24px)}
+            .modal-sheet{padding:24px 18px;padding-bottom:max(36px,env(safe-area-inset-bottom)+20px)}
+            .modal-actions{flex-direction:column;gap:10px}
             .modal-actions button{min-height:48px}
             .btn,.btn-sm{min-height:44px}
         }
@@ -241,8 +247,8 @@
                 <canvas id="paymentChart"></canvas>
             </div>
             <div class="card">
-                <h2>Менеджерлер айлығы — <span id="pctDisplay">10</span>%</h2>
-                <div class="tables-desktop"><table class="salary-table"><thead><tr><th>Менеджер</th><th>Барлығы</th><th>Жеткізілген</th><th>Сату сомасы</th><th>Айлық</th></tr></thead><tbody id="salaryTable"></tbody></table></div>
+                <h2>Менеджерлер айлығы <span style="font-weight:500;color:var(--text-muted)">(дефолт <span id="pctDisplay">10</span>%)</span></h2>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="salary-table"><thead><tr><th>Менеджер</th><th>Барлығы</th><th>Жеткізілген</th><th>Сату сомасы</th><th>Пайыз %</th><th>Бонус</th><th>Айлық беру</th><th>К выплате</th></tr></thead><tbody id="salaryTable"></tbody></table></div>
                 <div class="cards-mobile" id="salaryCards"></div>
             </div>
         </div>
@@ -317,7 +323,7 @@
                     <div class="field"><label>Телефон</label><input type="tel" id="newMgrPhone" placeholder="+7 (___) ___-____" inputmode="numeric" maxlength="18"></div>
                     <button class="btn btn-primary" onclick="addManager()">Қосу</button>
                 </div>
-                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Аты</th><th>Телефон</th><th>Белсенді</th><th></th></tr></thead><tbody id="mgrTable"></tbody></table></div>
+                <div class="tables-desktop" style="overflow-x:auto"><table class="data-table"><thead><tr><th>ID</th><th>Аты</th><th>Телефон</th><th>Пайыз %</th><th>Айлық беру</th><th>Белсенді</th><th></th></tr></thead><tbody id="mgrTable"></tbody></table></div>
                 <div class="cards-mobile" id="mgrCards"></div>
             </div>
 
@@ -404,6 +410,21 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="hideTargetEditDlg()">Бас тарту</button>
                 <button class="btn-save" onclick="commitTargetEdit()">Сақтау</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Менеджер бонусы: жеке пайыз және айлық беру -->
+    <div class="modal-overlay" id="mgrBonusDlg">
+        <div class="modal-sheet" style="max-width:400px">
+            <h3>Менеджер бонусы</h3>
+            <input type="hidden" id="mgrBonusId">
+            <div class="field"><label>Менеджер</label><input type="text" id="mgrBonusName" readonly style="background:var(--bg);color:var(--text-muted)"></div>
+            <div class="field"><label>Пайыз (%)</label><input type="number" id="mgrBonusPct" min="0" max="100" step="0.5" placeholder="Бос — жалпы дефолт"></div>
+            <div class="field"><label>Айлық беру (₸)</label><input type="number" id="mgrBonusMonthly" min="0" step="1000" placeholder="0 — бонустан азайтылады"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeMgrBonusDlg()">Бас тарту</button>
+                <button class="btn-save" onclick="saveMgrBonus()">Сақтау</button>
             </div>
         </div>
     </div>
@@ -657,52 +678,92 @@
             allPaymentTypes.forEach(p=>eP.innerHTML+=`<option value="${p.id}">${p.name}</option>`);
         }
 
-        // ORDERS
+        // ORDERS — жүктеу join-сіз, атын локальді тізімдерден аламыз (Supabase relation аты сәйкессіз болуы мүмкін)
         async function loadAdminOrders(){
-            const status=document.getElementById('aFilterStatus').value;
-            const mgr=document.getElementById('aFilterManager').value;
-            const from=document.getElementById('aFilterFrom').value;
-            const to=document.getElementById('aFilterTo').value;
-
-            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-delivery-types(name, extra_field_name), eseke-payment-types(name)').order('created_at',{ascending:false}).limit(300);
-            if(status)q=q.eq('status',status);
-            if(mgr)q=q.eq('manager_id',parseInt(mgr));
-            if(from)q=q.gte('created_at',from+'T00:00:00');
-            if(to)q=q.lte('created_at',to+'T23:59:59');
-
-            const{data:orders}=await q;
             const list=document.getElementById('adminOrdersList');
-            if(!orders||!orders.length){list.innerHTML='<div style="text-align:center;padding:40px;color:#ccc">Тапсырыстар табылмады</div>';return}
+            try {
+                const status=document.getElementById('aFilterStatus').value;
+                const mgr=document.getElementById('aFilterManager').value;
+                const from=document.getElementById('aFilterFrom').value;
+                const to=document.getElementById('aFilterTo').value;
 
-            const sText={new:'Жаңа',processing:'Өңделуде',shipped:'Жіберілді',delivered:'Жеткізілді',cancelled:'Бас тартылды'};
-            const sCls={new:'s-new',processing:'s-processing',shipped:'s-shipped',delivered:'s-delivered',cancelled:'s-cancelled'};
+                let q=sb.from('eseke-orders').select('*').order('created_at',{ascending:false}).limit(300);
+                if(status)q=q.eq('status',status);
+                if(mgr)q=q.eq('manager_id',parseInt(mgr));
+                if(from)q=q.gte('created_at',from+'T00:00:00');
+                if(to)q=q.lte('created_at',to+'T23:59:59');
 
-            list.innerHTML=orders.map(o=>{
-                let prods=[];try{prods=JSON.parse(o.products_json||'[]')}catch(e){}
-                const prodsStr=prods.map(p=>`${p.product_name} × ${p.quantity}`).join(', ')||'-';
-                const mName=o['eseke-managers']?.name||'-';
-                const dName=o['eseke-delivery-types']?.name||'-';
-                const pName=o['eseke-payment-types']?.name||'-';
-                const oJson=JSON.stringify({id:o.id,manager_id:o.manager_id,customer_name:o.customer_name,customer_phone:o.customer_phone||'',customer_address:o.customer_address||'',status:o.status,total_price:o.total_price,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||'',payment_type_id:o.payment_type_id,shipped_date:o.shipped_date||'',notes:o.notes||''}).replace(/'/g,"\\'");
-                return `
+                const{data:orders,error}=await q;
+                if(error){list.innerHTML='<div class="order-empty-err">Қате: '+error.message+'</div>';showToast('Қате: '+error.message,'err');return}
+                if(!orders||!orders.length){list.innerHTML='<div class="order-empty">Тапсырыстар табылмады</div>';return}
+
+                const sText={new:'Жаңа',processing:'Өңделуде',shipped:'Жіберілді',delivered:'Жеткізілді',cancelled:'Бас тартылды'};
+                const sCls={new:'s-new',processing:'s-processing',shipped:'s-shipped',delivered:'s-delivered',cancelled:'s-cancelled'};
+
+                list.innerHTML=orders.map(o=>{
+                    let prods=[];try{prods=JSON.parse(o.products_json||'[]')}catch(e){}
+                    const prodsStr=prods.map(p=>`${p.product_name} × ${p.quantity}`).join(', ')||'-';
+                    const mName=allManagers.find(m=>m.id===o.manager_id)?.name||'-';
+                    const dType=allDeliveryTypes.find(d=>d.id===o.delivery_type_id);
+                    const dName=dType?.name||'-';
+                    const extraLabel=dType?.extra_field_name||'';
+                    const pName=allPaymentTypes.find(p=>p.id===o.payment_type_id)?.name||'-';
+                    const payload={id:o.id,manager_id:o.manager_id,customer_name:o.customer_name,customer_phone:o.customer_phone||'',customer_address:o.customer_address||'',status:o.status,total_price:o.total_price,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||'',payment_type_id:o.payment_type_id,shipped_date:o.shipped_date||'',notes:o.notes||''};
+                    const payloadB64=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+                    return `
                 <div class="order-card status-${o.status}">
                     <div class="order-top">
                         <span class="order-id">#${o.id} • ${new Date(o.created_at).toLocaleDateString('kk-KZ')}</span>
                         <span class="order-status ${sCls[o.status]}">${sText[o.status]}</span>
                     </div>
-                    <div class="order-client">${o.customer_name}</div>
-                    <div class="order-detail">Телефон: <span>${o.customer_phone||'-'}</span></div>
+                    <div class="order-client">${(o.customer_name||'').replace(/</g,'&lt;')}</div>
+                    <div class="order-detail">Телефон: <span>${(o.customer_phone||'-').replace(/</g,'&lt;')}</span></div>
                     <div class="order-detail">Менеджер: <span>${mName}</span></div>
-                    <div class="order-detail">Тауарлар: <span>${prodsStr}</span></div>
+                    <div class="order-detail">Тауарлар: <span>${(prodsStr||'-').replace(/</g,'&lt;')}</span></div>
                     <div class="order-detail">Жеткізу: <span>${dName}</span> | Төлем: <span>${pName}</span></div>
-                    ${o.delivery_extra_value?`<div class="order-detail">${o['eseke-delivery-types']?.extra_field_name||''}: <span>${o.delivery_extra_value}</span></div>`:''}
+                    ${o.delivery_extra_value?`<div class="order-detail">${extraLabel}: <span>${String(o.delivery_extra_value).replace(/</g,'&lt;')}</span></div>`:''}
                     <div class="order-price">${Number(o.total_price||0).toLocaleString()} ₸</div>
                     <div class="order-actions">
-                        <button class="btn btn-outline btn-sm" onclick='openEditModal(JSON.parse(atob("${btoa(JSON.stringify({id:o.id,manager_id:o.manager_id,customer_name:o.customer_name,customer_phone:o.customer_phone||'',customer_address:o.customer_address||'',status:o.status,total_price:o.total_price,delivery_type_id:o.delivery_type_id,delivery_extra_value:o.delivery_extra_value||'',payment_type_id:o.payment_type_id,shipped_date:o.shipped_date||'',notes:o.notes||''}))}")))'>Өзгерту</button>
+                        <button class="btn btn-outline btn-sm order-edit-btn" data-payload="${payloadB64}">Өзгерту</button>
                         <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">Өшіру</button>
                     </div>
                 </div>`;
-            }).join('');
+                }).join('');
+            } catch(err) {
+                list.innerHTML='<div class="order-empty-err">Жүктеу қатесі: '+String(err.message)+'</div>';
+                showToast('Жүктеу қатесі','err');
+            }
+        }
+        function openEditModalFromEncoded(jsonStr){try{openEditModal(JSON.parse(jsonStr))}catch(e){showToast('Қате: '+e.message,'err')}}
+        document.addEventListener('click',function(e){
+            const btn=e.target.closest('.order-edit-btn');
+            if(btn&&btn.dataset.payload){try{const json=decodeURIComponent(escape(atob(btn.dataset.payload)));openEditModal(JSON.parse(json))}catch(err){showToast('Қате: '+err.message,'err')}}
+            const mbtn=e.target.closest('.mgr-bonus-btn');
+            if(mbtn){openMgrBonusDlg(parseInt(mbtn.dataset.id),mbtn.dataset.name||'',mbtn.dataset.pct===''?null:parseFloat(mbtn.dataset.pct),parseInt(mbtn.dataset.payout)||0);}
+        });
+        function openMgrBonusDlg(id,name,pct,monthly){
+            document.getElementById('mgrBonusId').value=id;
+            document.getElementById('mgrBonusName').value=name;
+            document.getElementById('mgrBonusPct').value=pct!=null?pct:'';
+            document.getElementById('mgrBonusMonthly').value=monthly||0;
+            document.getElementById('mgrBonusDlg').classList.add('active');
+        }
+        function closeMgrBonusDlg(){document.getElementById('mgrBonusDlg').classList.remove('active');}
+        document.getElementById('mgrBonusDlg').addEventListener('click',function(e){if(e.target===this)closeMgrBonusDlg()});
+        async function saveMgrBonus(){
+            const id=parseInt(document.getElementById('mgrBonusId').value);
+            const pctVal=document.getElementById('mgrBonusPct').value.trim();
+            const pct=pctVal===''?null:parseFloat(pctVal);
+            const monthly=parseInt(document.getElementById('mgrBonusMonthly').value)||0;
+            const update={bonus_percentage:pct,monthly_payout:monthly};
+            const{error}=await sb.from('eseke-managers').update(update).eq('id',id);
+            if(error){showToast('Қате: '+error.message,'err');return}
+            showToast('Бонус баптауы сақталды');
+            closeMgrBonusDlg();
+            const {data:mgrs}=await sb.from('eseke-managers').select('*').order('name');
+            allManagers=mgrs||[];
+            loadSettingsData();
+            loadStatistics();
         }
 
         function updateEExtra(){
@@ -766,7 +827,7 @@
             const to=document.getElementById('statTo').value;
             const mgr=document.getElementById('statManager').value;
 
-            let q=sb.from('eseke-orders').select('*, eseke-managers(name), eseke-payment-types(name)');
+            let q=sb.from('eseke-orders').select('*');
             if(from)q=q.gte('created_at',from+'T00:00:00');
             if(to)q=q.lte('created_at',to+'T23:59:59');
             if(mgr)q=q.eq('manager_id',parseInt(mgr));
@@ -810,7 +871,7 @@
 
             // Payment chart
             const payMap={};
-            all.forEach(o=>{const n=o['eseke-payment-types']?.name||'Белгісіз';payMap[n]=(payMap[n]||0)+1});
+            all.forEach(o=>{const pt=allPaymentTypes.find(p=>p.id===o.payment_type_id);const n=pt?.name||'Белгісіз';payMap[n]=(payMap[n]||0)+1});
             if(paymentChart)paymentChart.destroy();
             const payColors=['#1a5c3a','#2196f3','#ff9800','#9c27b0','#e91e63','#607d8b'];
             paymentChart=new Chart(document.getElementById('paymentChart'),{
@@ -822,9 +883,9 @@
                 options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'Inter'}}},x:{ticks:{font:{family:'Inter',size:11}}}}}
             });
 
-            // Salary table
+            // Salary table — әр менеджердің жеке пайызы және айлық беру (азайтылады)
             const mgrStats={};
-            allManagers.filter(m=>m.active).forEach(m=>mgrStats[m.id]={name:m.name,total:0,delivered:0,sales:0});
+            allManagers.filter(m=>m.active).forEach(m=>mgrStats[m.id]={name:m.name,total:0,delivered:0,sales:0,bonus_percentage:m.bonus_percentage,monthly_payout:parseInt(m.monthly_payout)||0});
             all.forEach(o=>{
                 if(mgrStats[o.manager_id]){
                     mgrStats[o.manager_id].total++;
@@ -834,9 +895,15 @@
                     }
                 }
             });
-            const salaryRows=Object.values(mgrStats);
-            document.getElementById('salaryTable').innerHTML=salaryRows.map(m=>`<tr><td>${m.name}</td><td>${m.total}</td><td>${m.delivered}</td><td>${m.sales.toLocaleString()} ₸</td><td class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</td></tr>`).join('');
-            document.getElementById('salaryCards').innerHTML=salaryRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Менеджер</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Барлығы</span><span>${m.total}</span></div><div class="list-card-row"><span class="list-card-label">Жеткізілген</span><span>${m.delivered}</span></div><div class="list-card-row"><span class="list-card-label">Сату</span><span>${m.sales.toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">Айлық</span><span class="salary-amount">${Math.round(m.sales*pct/100).toLocaleString()} ₸</span></div></div>`).join('');
+            const salaryRows=Object.entries(mgrStats).map(([id,st])=>{
+                const usePct=(st.bonus_percentage!=null&&st.bonus_percentage!=='')?parseFloat(st.bonus_percentage):pct;
+                const bonus=Math.round(st.sales*usePct/100);
+                const monthly=Number(st.monthly_payout)||0;
+                const toPay=Math.max(0,bonus-monthly);
+                return{...st,id:parseInt(id),pctDisplay:usePct,bonus,monthly,toPay};
+            });
+            document.getElementById('salaryTable').innerHTML=salaryRows.map(m=>`<tr><td>${m.name}</td><td>${m.total}</td><td>${m.delivered}</td><td>${m.sales.toLocaleString()} ₸</td><td>${m.pctDisplay}</td><td>${m.bonus.toLocaleString()} ₸</td><td>${m.monthly.toLocaleString()} ₸</td><td class="salary-amount">${m.toPay.toLocaleString()} ₸</td></tr>`).join('');
+            document.getElementById('salaryCards').innerHTML=salaryRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Менеджер</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Барлығы</span><span>${m.total}</span></div><div class="list-card-row"><span class="list-card-label">Жеткізілген</span><span>${m.delivered}</span></div><div class="list-card-row"><span class="list-card-label">Сату</span><span>${m.sales.toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">Пайыз %</span><span>${m.pctDisplay}</span></div><div class="list-card-row"><span class="list-card-label">Бонус</span><span>${m.bonus.toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">Айлық беру</span><span>−${m.monthly.toLocaleString()} ₸</span></div><div class="list-card-row"><span class="list-card-label">К выплате</span><span class="salary-amount">${m.toPay.toLocaleString()} ₸</span></div></div>`).join('');
         }
 
         // CLIENTS
@@ -869,8 +936,10 @@
             // Managers table + cards (mobile)
             const{data:mgrs}=await sb.from('eseke-managers').select('*').order('name');
             const mgrRows=mgrs||[];
-            document.getElementById('mgrTable').innerHTML=mgrRows.map(m=>`<tr><td>${m.id}</td><td>${m.name}</td><td>${m.phone||'-'}</td><td><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></td><td><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></td></tr>`).join('');
-            document.getElementById('mgrCards').innerHTML=mgrRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Аты</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Телефон</span><span class="list-card-value">${m.phone||'-'}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></div><div class="list-card-actions"><button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></div></div>`).join('');
+            const pctVal=(m)=>m.bonus_percentage!=null&&m.bonus_percentage!==''?m.bonus_percentage:'—';
+            const payVal=(m)=>Number(m.monthly_payout)||0;
+            document.getElementById('mgrTable').innerHTML=mgrRows.map(m=>`<tr><td>${m.id}</td><td>${m.name}</td><td>${m.phone||'-'}</td><td>${pctVal(m)}</td><td>${payVal(m)?payVal(m).toLocaleString()+' ₸':'0'}</td><td><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></td><td><button class="btn btn-outline btn-sm mgr-bonus-btn" data-id="${m.id}" data-name="${(m.name||'').replace(/"/g,'&quot;')}" data-pct="${m.bonus_percentage!=null?m.bonus_percentage:''}" data-payout="${payVal(m)}">Бонус</button> <button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></td></tr>`).join('');
+            document.getElementById('mgrCards').innerHTML=mgrRows.map(m=>`<div class="list-card"><div class="list-card-row"><span class="list-card-label">Аты</span><span class="list-card-value">${m.name}</span></div><div class="list-card-row"><span class="list-card-label">Телефон</span><span class="list-card-value">${m.phone||'-'}</span></div><div class="list-card-row"><span class="list-card-label">Пайыз %</span><span>${pctVal(m)}</span></div><div class="list-card-row"><span class="list-card-label">Айлық беру</span><span>${payVal(m)?payVal(m).toLocaleString()+' ₸':'0'}</span></div><div class="list-card-row"><span class="list-card-label">Статус</span><span class="${m.active?'badge-active':'badge-inactive'}" onclick="toggleManager(${m.id},${m.active})">${m.active?'Белсенді':'Өшірулі'}</span></div><div class="list-card-actions"><button class="btn btn-outline btn-sm mgr-bonus-btn" data-id="${m.id}" data-name="${(m.name||'').replace(/"/g,'&quot;')}" data-pct="${m.bonus_percentage!=null?m.bonus_percentage:''}" data-payout="${payVal(m)}">Бонус</button> <button class="btn btn-danger btn-sm" onclick="deleteManager(${m.id})">Өшіру</button></div></div>`).join('');
 
             // Products table + cards
             const{data:prods}=await sb.from('eseke-products').select('*').order('name');
