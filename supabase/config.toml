@@ -1,0 +1,2 @@
+[functions.wa_redirect]
+verify_jwt = false
